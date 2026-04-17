@@ -3417,4 +3417,63 @@ export const filamentSeed = [
     ],
     "statsSource": "Polymaker PolyLite Glow / community TDS"
   }
+,
+  {
+    "slug": "peek",
+    "shortName": "PEEK",
+    "fullName": "Polyether Ether Ketone",
+    "summary": "The ultimate, high-performance thermoplastic polymer known for its excellent mechanical properties, thermal stability, and chemical resistance. It is commonly used in demanding applications such as aerospace, automotive, and medical devices due to its ability to withstand harsh environments, but it can also be used in biomedical.",
+    "sourceVideos": [
+      "https://youtu.be/mPh1b2EOOz0?si=lh5cgyXwQ5mfCaQs&t=95"
+    ],
+    "videoReferences": [
+      {
+        "title": "https://youtu.be/mPh1b2EOOz0?si=lh5cgyXwQ5mfCaQs&t=95",
+        "url": "https://youtu.be/mPh1b2EOOz0?si=lh5cgyXwQ5mfCaQs&t=95",
+        "thumbnailUrl": "https://i.ytimg.com/vi/mPh1b2EOOz0/hqdefault.jpg"
+      }
+    ],
+    "tags": [
+      "Chemical Resistant",
+      "High Heat",
+      "Print Enclosed",
+      "Specialty"
+    ],
+    "purchaseLinks": [
+      {
+        "label": "Inslogic",
+        "url": "https://www.amazon.com/Inslogic-High-Strength-Heat-Resistant-Retardant-Compatible/dp/B0FG2RT2FY/ref=sr_1_4?crid=3TLWFEC1PFHXZ&dib=eyJ2IjoiMSJ9.LFLIEhWXThAmTZkx05Cq2uIMsLd3WausZ0j80Gaa18Do0A2bZ9CxwUA6SzjNOEB6AXI5E_9CWJE6njw0TSLc9WLQark4z5FKpmIOhCEuo8bv32aQdikYW5daogUxpgnO1fxA13uj3ZqIYcS2D_7qgVVGqByIRHKHV3bdI-Zyc-_EcNoV7I-FZdsWgRvhYnwTHd8Rx0KNAnHon393XMPMYhCb85bfRIozb0MdHr1dNMc.eR3hNDdr6cklR3uxIm5mreIvhpXZ80VS0VW3Hf1-nQE&dib_tag=se&keywords=peek%2Bfilament&qid=1776452467"
+      }
+    ],
+    "heroImageUrl": "",
+    "heroImageCreditLabel": "",
+    "heroImageCreditUrl": "",
+    "stats": [
+      {
+        "label": "Strength",
+        "value": 100
+      },
+      {
+        "label": "Heat",
+        "value": 100
+      },
+      {
+        "label": "Printability",
+        "value": 10
+      },
+      {
+        "label": "Weather",
+        "value": 100
+      },
+      {
+        "label": "Flex",
+        "value": 10
+      },
+      {
+        "label": "Finish",
+        "value": 90
+      }
+    ],
+    "statsSource": "Inslogic TDS"
+  }
 ] as const;
