@@ -1,0 +1,216 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { filaments } from '../data/filaments';
+
+// Gather all unique tags
+const allTags = [...new Set(filaments.flatMap((f) => f.tags))].sort();
+
+function tagClass(tag: string) {
+  return 'tag tag-' + tag.replace(/\s+/g, '-').replace(/\//g, '-');
+}
+---
+
+<Layout title="Filibrary">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>The 3D Printer<br/><span class="hero-accent">Filament Library</span></h1>
+      <p class="hero-sub">
+        {filaments.length} materials explained — what they're good for, how hard they are to print, and where to buy them.
+      </p>
+      <div class="hero-search-wrap">
+        <input
+          id="search"
+          type="search"
+          class="hero-search"
+          placeholder="Search materials… e.g. PLA, carbon fiber, flexible"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Tag Filter -->
+  <section class="filter-section">
+    <div class="container">
+      <div class="filter-bar">
+        <button class="filter-tag active" data-tag="all">All</button>
+        {allTags.map((tag) => (
+          <button class={`filter-tag ${tagClass(tag)}`} data-tag={tag}>{tag}</button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <section class="grid-section">
+    <div class="container">
+      <p class="results-count" id="results-count">{filaments.length} materials</p>
+      <div class="filament-grid" id="filament-grid">
+        {filaments.map((f) => (
+          <a
+            href={`/filaments/${f.slug}`}
+            class="filament-card"
+            data-tags={JSON.stringify(f.tags)}
+            data-search={`${f.shortName} ${f.fullName} ${f.summary} ${f.tags.join(' ')}`.toLowerCase()}
+          >
+            <div class="card-header">
+              <span class="card-short">{f.shortName}</span>
+              {f.tags.slice(0, 2).map((tag) => (
+                <span class={tagClass(tag)}>{tag}</span>
+              ))}
+            </div>
+            <h3 class="card-full">{f.fullName}</h3>
+            <p class="card-summary">{f.summary.slice(0, 110)}{f.summary.length > 110 ? '…' : ''}</p>
+
+            {f.stats && f.stats.length > 0 ? (
+              <div class="card-stats">
+                {f.stats.slice(0, 3).map((s) => (
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">{s.label}</div>
+                    <div class="mini-stat-track">
+                      <div
+                        class={`mini-stat-fill stat-${s.label}`}
+                        style={`width:${s.value}%`}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            <div class="card-footer">
+              {f.purchaseLinks.length > 0
+                ? <span class="card-buy-count">🛒 {f.purchaseLinks.length} {f.purchaseLinks.length === 1 ? 'vendor' : 'vendors'}</span>
+                : <span class="card-no-buy">No links yet</span>
+              }
+              <span class="card-arrow">View →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p class="no-results hidden" id="no-results">No filaments match — <button class="link-btn" id="clear-btn">clear filters</button></p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .hero { background: var(--header-bg); color: #fff; padding: 3.5rem 0 2.5rem; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; line-height: 1.1; margin-bottom: 1rem; }
+  .hero-accent { color: var(--accent); }
+  .hero-sub { font-size: 1.05rem; color: #94a3b8; max-width: 520px; line-height: 1.6; margin-bottom: 1.5rem; }
+  .hero-search-wrap { max-width: 520px; }
+  .hero-search {
+    width: 100%; padding: 0.75rem 1.1rem; border-radius: 10px;
+    border: 2px solid #1e293b; background: #1e293b; color: #fff;
+    font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.15s;
+  }
+  .hero-search::placeholder { color: #475569; }
+  .hero-search:focus { border-color: var(--accent); }
+
+  /* Filter */
+  .filter-section { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.875rem 0; position: sticky; top: 53px; z-index: 50; }
+  .filter-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+  .filter-tag {
+    padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+    border: 1.5px solid var(--border); background: var(--bg); color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .filter-tag:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-tag.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Grid */
+  .grid-section { padding: 2rem 0 4rem; }
+  .results-count { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+  .filament-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* Card */
+  .filament-card {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    text-decoration: none; color: inherit;
+  }
+  .filament-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+  .card-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .card-short {
+    font-size: 0.95rem; font-weight: 800; color: var(--accent);
+    background: #fff7ed; border: 1.5px solid #fed7aa;
+    padding: 0.15rem 0.6rem; border-radius: 6px;
+  }
+  .card-full { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .card-summary { font-size: 0.83rem; color: var(--text-muted); line-height: 1.55; flex: 1; }
+
+  /* Mini stats on card */
+  .card-stats { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.25rem; }
+  .mini-stat { display: grid; grid-template-columns: 72px 1fr; gap: 0.5rem; align-items: center; }
+  .mini-stat-label { font-size: 0.72rem; color: var(--text-muted); }
+  .mini-stat-track { background: var(--border); border-radius: 99px; height: 5px; overflow: hidden; }
+  .mini-stat-fill { height: 100%; border-radius: 99px; }
+
+  /* Card footer */
+  .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--border); margin-top: auto; }
+  .card-buy-count { font-size: 0.78rem; color: var(--text-muted); }
+  .card-no-buy { font-size: 0.78rem; color: #cbd5e1; }
+  .card-arrow { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+
+  /* No results */
+  .no-results { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.95rem; }
+  .no-results.hidden { display: none; }
+  .link-btn { background: none; border: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: inherit; }
+</style>
+
+<script>
+  const searchInput  = document.getElementById('search') as HTMLInputElement;
+  const filterTags   = document.querySelectorAll<HTMLButtonElement>('.filter-tag');
+  const cards        = document.querySelectorAll<HTMLElement>('.filament-card');
+  const countEl      = document.getElementById('results-count');
+  const noResults    = document.getElementById('no-results');
+  const clearBtn     = document.getElementById('clear-btn');
+
+  let activeTag = 'all';
+  let searchQuery = '';
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const tags: string[] = JSON.parse(card.dataset.tags || '[]');
+      const search = card.dataset.search || '';
+      const tagMatch = activeTag === 'all' || tags.includes(activeTag);
+      const searchMatch = !searchQuery || search.includes(searchQuery.toLowerCase());
+      const show = tagMatch && searchMatch;
+      (card as HTMLElement).style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (countEl) countEl.textContent = `${visible} material${visible !== 1 ? 's' : ''}`;
+    if (noResults) noResults.classList.toggle('hidden', visible > 0);
+  }
+
+  filterTags.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTag = btn.dataset.tag || 'all';
+      filterTags.forEach(b => b.classList.toggle('active', b.dataset.tag === activeTag));
+      applyFilters();
+    });
+  });
+
+  searchInput?.addEventListener('input', () => {
+    searchQuery = searchInput.value.trim();
+    applyFilters();
+  });
+
+  clearBtn?.addEventListener('click', () => {
+    activeTag = 'all';
+    searchQuery = '';
+    if (searchInput) searchInput.value = '';
+    filterTags.forEach(b => b.classList.toggle('active', b.dataset.tag === 'all'));
+    applyFilters();
+  });
+</script>

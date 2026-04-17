@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const ALL_TAGS = [
+  'Abrasive','Aesthetic','Beginner Friendly','Chemical Resistant','Composite',
+  'Core Material','Durable','Eco / Bio-Based','Electronics','Flexible',
+  'High Heat','Hygroscopic','Lightweight','Outdoor','Print Enclosed',
+  'Specialty','Support',
+];
+---
+
+<Layout
+  title="Submit a Filament"
+  description="Know a filament that's missing from the library? Submit it for review and we'll add it."
+>
+
+  <div class="submit-page">
+    <div class="container container-narrow">
+
+      <div class="crumb-bar-inner">
+        <a href="/">← Back to Library</a>
+      </div>
+
+      <header class="submit-header">
+        <h1>Submit a Filament</h1>
+        <p>
+          Found a material that's missing? Submit it here and we'll review it before adding it to the library.
+          All submissions are manually approved — please include accurate information.
+        </p>
+      </header>
+
+      <!-- Success state (hidden initially) -->
+      <div id="success-msg" class="success-box hidden">
+        <span class="success-icon">✅</span>
+        <div>
+          <p class="success-title">Submission received!</p>
+          <p class="success-text">Thanks — we'll review it and add it to the library if it looks good.</p>
+        </div>
+      </div>
+
+      <!-- Error state (hidden initially) -->
+      <div id="error-msg" class="error-box hidden">
+        <span>⚠️</span>
+        <p id="error-text">Something went wrong. Please try again.</p>
+      </div>
+
+      <form id="submit-form" class="submit-form" novalidate>
+
+        <!-- Honeypot (spam protection - hidden from humans) -->
+        <div style="display:none" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="short_name">Short Name / Code <span class="required">*</span></label>
+            <span class="form-hint">e.g. PLA, PETG-CF, TPU</span>
+            <input type="text" id="short_name" name="short_name" class="form-input" required maxlength="40" placeholder="PA-CF" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="full_name">Full Material Name <span class="required">*</span></label>
+            <span class="form-hint">e.g. Carbon Fiber Reinforced Nylon</span>
+            <input type="text" id="full_name" name="full_name" class="form-input" required maxlength="120" placeholder="Carbon Fiber Reinforced PA..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="summary">Summary <span class="required">*</span></label>
+          <span class="form-hint">2–4 sentences: what is it, what's it good for, any major caveats?</span>
+          <textarea id="summary" name="summary" class="form-textarea" required minlength="40" maxlength="600" placeholder="Describe the material's properties, main use cases, and any important print considerations..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <span class="form-hint">Select all that apply</span>
+          <div class="checkbox-grid">
+            {ALL_TAGS.map(tag => (
+              <label class="checkbox-label">
+                <input type="checkbox" name="tags" value={tag} />
+                {tag}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="purchase_link">Purchase Link</label>
+          <span class="form-hint">Direct product or brand URL. We'll map affiliate codes ourselves.</span>
+          <input type="url" id="purchase_link" name="purchase_link" class="form-input" placeholder="https://shop.polymaker.com/products/..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="video_url">Reference Video URL</label>
+          <span class="form-hint">YouTube link to a review or guide for this material</span>
+          <input type="url" id="video_url" name="video_url" class="form-input" placeholder="https://youtu.be/..." />
+          <input type="text" id="video_title" name="video_title" class="form-input" style="margin-top:0.4rem" placeholder="Video title (optional)" maxlength="120" />
+        </div>
+
+        <div class="form-submit-row">
+          <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+            <span id="submit-text">Submit for Review</span>
+            <span id="submit-spinner" class="spinner hidden"></span>
+          </button>
+          <p class="submit-note">All submissions are manually reviewed before publishing.</p>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .submit-page { padding: 2rem 0 5rem; }
+  .container-narrow { max-width: 720px; }
+  .crumb-bar-inner { margin-bottom: 1.5rem; }
+  .crumb-bar-inner a { font-size: 0.85rem; color: var(--text-muted); transition: color 0.15s; }
+  .crumb-bar-inner a:hover { color: var(--accent); }
+  .submit-header { margin-bottom: 2rem; }
+  .submit-header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.6rem; }
+  .submit-header p { color: var(--text-muted); line-height: 1.65; font-size: 0.95rem; }
+  .required { color: var(--accent); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+  .submit-form { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 2rem; }
+  .form-submit-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .btn-lg { padding: 0.75rem 1.75rem; font-size: 1rem; }
+  .submit-note { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* Success / Error */
+  .success-box, .error-box {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.25rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 1.5px solid;
+  }
+  .success-box { background: #f0fdf4; border-color: #bbf7d0; }
+  .success-icon { font-size: 1.5rem; }
+  .success-title { font-weight: 700; color: #15803d; margin-bottom: 0.25rem; }
+  .success-text { font-size: 0.875rem; color: #166534; }
+  .error-box { background: #fef2f2; border-color: #fecaca; color: #b91c1c; font-size: 0.875rem; gap: 0.5rem; align-items: center; }
+  .hidden { display: none !important; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
+  const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+  const form = document.getElementById('submit-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const submitText = document.getElementById('submit-text')!;
+  const submitSpinner = document.getElementById('submit-spinner')!;
+  const successMsg = document.getElementById('success-msg')!;
+  const errorMsg = document.getElementById('error-msg')!;
+  const errorText = document.getElementById('error-text')!;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Honeypot check
+    const honeypot = (form.querySelector('[name="website"]') as HTMLInputElement)?.value;
+    if (honeypot) return; // Silent bail — bot filled the honeypot
+
+    // Validate required fields
+    const shortName = (form.querySelector('#short_name') as HTMLInputElement).value.trim();
+    const fullName  = (form.querySelector('#full_name')  as HTMLInputElement).value.trim();
+    const summary   = (form.querySelector('#summary')    as HTMLTextAreaElement).value.trim();
+
+    if (!shortName || !fullName || !summary) {
+      errorText.textContent = 'Please fill in Short Name, Full Name, and Summary.';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
+
+    // Collect tags
+    const checkedTags = [...form.querySelectorAll<HTMLInputElement>('input[name="tags"]:checked')]
+      .map(cb => cb.value);
+
+    // Purchase link
+    const purchaseLink = (form.querySelector('#purchase_link') as HTMLInputElement).value.trim();
+
+    // Video reference
+    const videoUrl   = (form.querySelector('#video_url')   as HTMLInputElement).value.trim();
+    const videoTitle = (form.querySelector('#video_title') as HTMLInputElement).value.trim();
+    const sourceLinks = videoUrl
+      ? [{ title: videoTitle || videoUrl, url: videoUrl }]
+      : [];
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitText.textContent = 'Submitting…';
+    submitSpinner.classList.remove('hidden');
+    errorMsg.classList.add('hidden');
+
+    try {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        throw new Error('Supabase is not configured yet — submissions are currently offline.');
+      }
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/community_submissions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({
+          short_name:   shortName,
+          full_name:    fullName,
+          summary:      summary,
+          tags:         checkedTags,
+          purchase_link: purchaseLink || null,
+          source_links:  sourceLinks,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(body || `HTTP ${res.status}`);
+      }
+
+      // Success!
+      form.classList.add('hidden');
+      successMsg.classList.remove('hidden');
+
+    } catch (err: unknown) {
+      errorText.textContent = err instanceof Error ? err.message : 'Unexpected error. Please try again.';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitText.textContent = 'Submit for Review';
+      submitSpinner.classList.add('hidden');
+    }
+  });
+</script>

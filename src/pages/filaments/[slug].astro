@@ -1,0 +1,223 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { filaments } from '../../data/filaments';
+
+export function getStaticPaths() {
+  return filaments.map((f) => ({ params: { slug: f.slug }, props: { filament: f } }));
+}
+
+const { filament: f } = Astro.props;
+
+function tagClass(tag: string) {
+  return 'tag tag-' + tag.replace(/\s+/g, '-').replace(/\//g, '-');
+}
+
+const statColors: Record<string, string> = {
+  Strength: '#3b82f6',
+  Heat: '#ef4444',
+  Printability: '#22c55e',
+  Weather: '#14b8a6',
+  Flex: '#a855f7',
+  Finish: '#f59e0b',
+};
+
+// Find related filaments by shared tags
+const related = filaments
+  .filter(r => r.slug !== f.slug && r.tags.some(t => f.tags.includes(t)))
+  .slice(0, 4);
+---
+
+<Layout title={`${f.shortName} — ${f.fullName}`} description={f.summary}>
+
+  <div class="crumb-bar">
+    <div class="container">
+      <a href="/">← Back to Library</a>
+    </div>
+  </div>
+
+  <div class="detail-page">
+    <div class="container">
+
+      <!-- Header -->
+      <header class="detail-header">
+        <div class="detail-title-row">
+          <span class="detail-short">{f.shortName}</span>
+          <div class="detail-tags">
+            {f.tags.map(tag => <span class={tagClass(tag)}>{tag}</span>)}
+          </div>
+        </div>
+        <h1 class="detail-full">{f.fullName}</h1>
+        <p class="detail-summary">{f.summary}</p>
+      </header>
+
+      <!-- Two-column layout -->
+      <div class="detail-grid">
+
+        <!-- Left: Stats + Videos -->
+        <div class="detail-main">
+
+          {f.stats && f.stats.length > 0 ? (
+            <section class="detail-section">
+              <h2>Performance Ratings</h2>
+              <div class="stat-bar-wrap">
+                {f.stats.map(s => (
+                  <div class="stat-row">
+                    <span class="stat-label">{s.label}</span>
+                    <div class="stat-track">
+                      <div
+                        class={`stat-fill stat-${s.label}`}
+                        style={`width:${s.value}%`}
+                      ></div>
+                    </div>
+                    <span class="stat-value">{s.value}</span>
+                  </div>
+                ))}
+              </div>
+              {f.statsSource && (
+                <p class="stat-source">Source: {f.statsSource}</p>
+              )}
+            </section>
+          ) : (
+            <section class="detail-section stats-empty">
+              <h2>Performance Ratings</h2>
+              <p>Detailed stats for this material are not yet available. <a href="/submit">Have data? Submit it.</a></p>
+            </section>
+          )}
+
+          {f.videoReferences && f.videoReferences.length > 0 && (
+            <section class="detail-section">
+              <h2>Referenced In</h2>
+              <div class="video-grid">
+                {f.videoReferences.map(v => (
+                  <a href={v.url} target="_blank" rel="noopener noreferrer" class="video-card">
+                    <div class="video-thumb">
+                      <img src={v.thumbnailUrl} alt={v.title} loading="lazy" />
+                      <span class="video-play">▶</span>
+                    </div>
+                    <p class="video-title">{v.title}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+        </div>
+
+        <!-- Right: Buy links + Support -->
+        <aside class="detail-aside">
+
+          <div class="aside-card buy-card">
+            <h2>Where to Buy</h2>
+            {f.purchaseLinks && f.purchaseLinks.length > 0 ? (
+              <div class="buy-list">
+                {f.purchaseLinks.map(link => (
+                  <a href={link.url} target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">
+                    <span>{link.label}</span>
+                    <span class="btn-buy-arrow">→</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p class="no-links">No purchase links yet. <a href="/submit">Know a good source? Submit it.</a></p>
+            )}
+            <p class="affiliate-note">🔗 Affiliate links — costs you nothing, helps keep this library free.</p>
+          </div>
+
+          <div class="aside-card support-card">
+            <p class="support-heading">Find Filibrary useful?</p>
+            <p class="support-text">This library is free. A coffee keeps it running.</p>
+            <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" rel="noopener noreferrer" class="btn-kofi">
+              ☕ Buy me a coffee
+            </a>
+          </div>
+
+          {related.length > 0 && (
+            <div class="aside-card related-card">
+              <h3>Related Materials</h3>
+              <ul class="related-list">
+                {related.map(r => (
+                  <li>
+                    <a href={`/filaments/${r.slug}`} class="related-link">
+                      <span class="related-short">{r.shortName}</span>
+                      <span class="related-full">{r.fullName}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+        </aside>
+      </div>
+
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .crumb-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.65rem 0; }
+  .crumb-bar a { font-size: 0.85rem; color: var(--text-muted); transition: color 0.15s; }
+  .crumb-bar a:hover { color: var(--accent); }
+
+  .detail-page { padding: 2.5rem 0 4rem; }
+
+  /* Header */
+  .detail-header { margin-bottom: 2.5rem; }
+  .detail-title-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .detail-short {
+    font-size: 1.1rem; font-weight: 900; color: var(--accent);
+    background: #fff7ed; border: 2px solid #fed7aa; padding: 0.2rem 0.75rem; border-radius: 8px;
+  }
+  .detail-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .detail-full { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; line-height: 1.2; color: var(--text); margin-bottom: 1rem; }
+  .detail-summary { font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; max-width: 680px; }
+
+  /* Layout grid */
+  .detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
+  @media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } .detail-aside { order: -1; } }
+
+  /* Sections */
+  .detail-section { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .detail-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; color: var(--text); }
+  .stat-source { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; }
+  .stats-empty p { font-size: 0.875rem; color: var(--text-muted); }
+  .stats-empty a { color: var(--accent); font-weight: 600; }
+
+  /* Videos */
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+  .video-card { text-decoration: none; color: inherit; }
+  .video-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; background: #0f172a; }
+  .video-thumb img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.15s; }
+  .video-card:hover .video-thumb img { opacity: 0.8; }
+  .video-play {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: rgba(255,255,255,0.9); pointer-events: none;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .video-title { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4; }
+
+  /* Aside */
+  .detail-aside { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 110px; }
+  .aside-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .aside-card h2, .aside-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+
+  /* Buy list */
+  .buy-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+  .no-links { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .no-links a { color: var(--accent); font-weight: 600; }
+  .affiliate-note { font-size: 0.72rem; color: #94a3b8; line-height: 1.5; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+
+  /* Support */
+  .support-card { background: #fff7ed; border-color: #fed7aa; }
+  .support-heading { font-size: 0.95rem; font-weight: 700; color: #c2410c; margin-bottom: 0.4rem; }
+  .support-text { font-size: 0.83rem; color: #92400e; margin-bottom: 0.9rem; }
+
+  /* Related */
+  .related-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .related-link { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+  .related-link:last-child { border-bottom: none; }
+  .related-link:hover .related-short { color: var(--accent); }
+  .related-short { font-size: 0.8rem; font-weight: 800; color: var(--accent); min-width: 50px; }
+  .related-full { font-size: 0.82rem; color: var(--text-muted); }
+</style>

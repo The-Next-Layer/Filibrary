@@ -1,0 +1,246 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'A curated 3D printer filament reference library. Every material explained, compared, and linked to where you can buy it.',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://filibrary.thenextlayer.com');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+  <title>{title === 'Filibrary' ? 'Filibrary — The 3D Printer Filament Library' : `${title} | Filibrary`}</title>
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="site-logo">
+          <span class="logo-accent">Fili</span>brary
+        </a>
+        <nav class="site-nav">
+          <a href="/" class="nav-link">Library</a>
+          <a href="/submit" class="nav-link">Submit a Filament</a>
+          <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" rel="noopener noreferrer" class="btn-support">
+            ☕ Support
+          </a>
+        </nav>
+        <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <p class="footer-logo"><span class="logo-accent">Fili</span>brary</p>
+          <p class="footer-tagline">The 3D printer filament reference library.<br/>Every material explained, every link an affiliate.</p>
+        </div>
+        <div class="footer-support">
+          <p class="footer-support-label">Find this useful?</p>
+          <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" rel="noopener noreferrer" class="btn-kofi">
+            ☕ Buy me a coffee on Ko-fi
+          </a>
+        </div>
+        <div>
+          <p class="footer-links-title">Site</p>
+          <ul class="footer-links">
+            <li><a href="/">Filament Library</a></li>
+            <li><a href="/submit">Submit a Filament</a></li>
+            <li><a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Built by <a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a>. Buy links are affiliate links — they cost you nothing and help keep this library free.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('.site-nav');
+    toggle?.addEventListener('click', () => nav?.classList.toggle('open'));
+  </script>
+
+</body>
+</html>
+
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --accent: #f97316;
+    --accent-dark: #ea580c;
+    --header-bg: #0f172a;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  html { font-family: var(--font); background: var(--bg); color: var(--text); }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  main { flex: 1; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--header-bg);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.3);
+  }
+  .header-inner {
+    display: flex; align-items: center; gap: 2rem;
+    padding: 0.875rem 0;
+  }
+  .site-logo {
+    font-size: 1.35rem; font-weight: 800; color: #fff; letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .logo-accent { color: var(--accent); }
+  .site-nav { display: flex; align-items: center; gap: 0.25rem; margin-left: auto; }
+  .nav-link {
+    color: #cbd5e1; font-size: 0.9rem; padding: 0.4rem 0.75rem;
+    border-radius: 6px; transition: color 0.15s, background 0.15s;
+  }
+  .nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .btn-support {
+    background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 600;
+    padding: 0.4rem 1rem; border-radius: 20px; transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn-support:hover { background: var(--accent-dark); }
+  .nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; margin-left: auto; }
+  @media (max-width: 640px) {
+    .nav-toggle { display: block; }
+    .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--header-bg); flex-direction: column; align-items: flex-start; padding: 1rem 1.5rem; gap: 0.5rem; }
+    .site-nav.open { display: flex; }
+  }
+
+  /* ── Footer ── */
+  .site-footer { background: var(--header-bg); color: #94a3b8; margin-top: 5rem; }
+  .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; padding: 3rem 0 2rem; }
+  .footer-logo { font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+  .footer-tagline { font-size: 0.875rem; line-height: 1.6; color: #64748b; }
+  .footer-support { display: flex; flex-direction: column; gap: 0.75rem; }
+  .footer-support-label { font-size: 0.875rem; color: #94a3b8; }
+  .btn-kofi {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: #ff5e5b; color: #fff; font-size: 0.875rem; font-weight: 600;
+    padding: 0.6rem 1.25rem; border-radius: 8px; transition: opacity 0.15s;
+    white-space: nowrap; align-self: flex-start;
+  }
+  .btn-kofi:hover { opacity: 0.85; }
+  .footer-links-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; margin-bottom: 0.75rem; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .footer-links a { font-size: 0.875rem; color: #64748b; transition: color 0.15s; }
+  .footer-links a:hover { color: #fff; }
+  .footer-bottom { border-top: 1px solid #1e293b; padding: 1.25rem 0; font-size: 0.8rem; color: #475569; line-height: 1.6; }
+  .footer-bottom a { color: #64748b; } .footer-bottom a:hover { color: #94a3b8; }
+
+  /* ── Tag pills ── */
+  .tag {
+    display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em;
+    padding: 0.2rem 0.6rem; border-radius: 20px; background: var(--bg); color: var(--text-muted);
+    border: 1px solid var(--border); white-space: nowrap;
+  }
+  .tag-Beginner-Friendly  { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+  .tag-Core-Material      { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+  .tag-High-Heat          { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+  .tag-Outdoor            { background: #ccfbf1; color: #0f766e; border-color: #99f6e4; }
+  .tag-Flexible           { background: #f3e8ff; color: #7c3aed; border-color: #e9d5ff; }
+  .tag-Composite          { background: #ffedd5; color: #c2410c; border-color: #fed7aa; }
+  .tag-Abrasive           { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .tag-Chemical-Resistant { background: #cffafe; color: #0e7490; border-color: #a5f3fc; }
+  .tag-Eco--Bio-Based     { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+  .tag-Hygroscopic        { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
+  .tag-Lightweight        { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .tag-Durable            { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+  .tag-Aesthetic          { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; }
+  .tag-Electronics        { background: #fef9c3; color: #a16207; border-color: #fef08a; }
+  .tag-Support            { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  .tag-Specialty          { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+  .tag-Print-Enclosed     { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.15s; text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,0.3); }
+  .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-buy {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.75rem 1rem; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 0.9rem; font-weight: 500;
+    transition: all 0.15s; text-decoration: none;
+  }
+  .btn-buy:hover { border-color: var(--accent); background: #fff7ed; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-buy-arrow { color: var(--accent); font-weight: 700; }
+
+  /* ── Stat bars ── */
+  .stat-bar-wrap { display: flex; flex-direction: column; gap: 0.6rem; }
+  .stat-row { display: grid; grid-template-columns: 90px 1fr 2.5rem; align-items: center; gap: 0.75rem; }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+  .stat-track { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+  .stat-value { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-align: right; }
+  .stat-Strength    { background: #3b82f6; }
+  .stat-Heat        { background: #ef4444; }
+  .stat-Printability{ background: #22c55e; }
+  .stat-Weather     { background: #14b8a6; }
+  .stat-Flex        { background: #a855f7; }
+  .stat-Finish      { background: #f59e0b; }
+
+  /* ── Forms ── */
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
+  .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+  .form-hint  { font-size: 0.8rem; color: var(--text-muted); }
+  .form-input, .form-textarea, .form-select {
+    width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 0.9rem; font-family: var(--font);
+    background: var(--surface); color: var(--text); transition: border-color 0.15s;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+  }
+  .form-textarea { min-height: 100px; resize: vertical; }
+  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.4rem; }
+  .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; }
+  .checkbox-label input { accent-color: var(--accent); }
+</style>
