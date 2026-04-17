@@ -15,6 +15,7 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
 
 const SUPABASE_URL  = import.meta.env.PUBLIC_SUPABASE_URL  || '';
 const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
 ---
 
 <!DOCTYPE html>
@@ -52,6 +53,14 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
       }
     })();
   </script>
+  {CF_ANALYTICS_TOKEN && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${CF_ANALYTICS_TOKEN}"}`}
+    ></script>
+  )}
 </head>
 <body>
 
