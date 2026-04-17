@@ -36,8 +36,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
           local-dir: ./dist/
-          # Change this to match your Hostinger subdomain folder path:
-          server-dir: /public_html/filibrary.thenextlayer.com/
-          # Only upload changed files (faster subsequent deploys)
+          server-dir: /public_html/filament.thenextlayer.com/
           dangerous-clean-slate: false
