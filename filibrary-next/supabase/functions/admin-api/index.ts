@@ -190,6 +190,14 @@ function appendToArray(src: string, slug: string, key: string, entry: unknown): 
   return src.slice(0, arrOpen) + replacement + src.slice(arrClose);
 }
 
+// Reads and JSON-parses the contents of an inner array like "tags": [...].
+function readInnerArray<T = unknown>(src: string, slug: string, key: string): T[] {
+  const [objStart, objEnd] = filamentObjectBounds(src, slug);
+  const [arrOpen, arrClose] = innerArrayBounds(src, objStart, objEnd, key);
+  const inner = src.slice(arrOpen, arrClose + 1);
+  try { return JSON.parse(inner) as T[]; } catch { return []; }
+}
+
 // Replaces the contents of an inner array entirely (used for stats).
 function replaceArray(src: string, slug: string, key: string, items: unknown[]): string {
   const [objStart, objEnd] = filamentObjectBounds(src, slug);
@@ -386,6 +394,20 @@ async function applyContribution(body: Record<string, any>) {
     const source = String(payload.statsSource || '').trim();
     if (source) next = replaceStringField(next, slug, 'statsSource', source);
     commitMsg = `Update performance ratings for ${slug}`;
+  } else if (type === 'tags') {
+    const incoming = Array.isArray(payload.tags)
+      ? payload.tags.map((t: unknown) => String(t).trim()).filter((t: string) => t.length > 0)
+      : [];
+    if (incoming.length === 0) throw new Error('tags required');
+    const existing = readInnerArray<string>(src, slug, 'tags');
+    const merged = existing.slice();
+    incoming.forEach((t: string) => { if (!merged.includes(t)) merged.push(t); });
+    if (merged.length === existing.length) {
+      throw new Error('all suggested tags already on filament');
+    }
+    next = replaceArray(src, slug, 'tags', merged);
+    const added = incoming.filter((t: string) => !existing.includes(t));
+    commitMsg = `Add tags to ${slug}: ${added.join(', ')}`;
   } else if (type === 'note') {
     throw new Error('notes must be resolved manually — use dismiss_contribution or edit seed.ts directly');
   } else {

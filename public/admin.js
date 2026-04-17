@@ -366,6 +366,7 @@
     vendor: 'New vendor',
     video:  'New video',
     stats:  'Performance ratings',
+    tags:   'Tags',
     note:   'Note',
   };
 
@@ -416,6 +417,23 @@
         + '</div>'
         + '<div class="admin-field"><label>Source</label>'
           + '<input class="form-input" data-f="statsSource" value="' + esc(payload.statsSource || '') + '" />'
+        + '</div>';
+    } else if (c.type === 'tags') {
+      var suggestedTags = Array.isArray(payload.tags) ? payload.tags : [];
+      var chosen = {};
+      suggestedTags.forEach(function (t) { chosen[String(t)] = true; });
+      var tagChecks = TAG_OPTIONS.map(function (t) {
+        var isChecked = chosen[t] ? ' checked' : '';
+        return (
+          '<label class="checkbox-label">'
+            + '<input type="checkbox" data-f-tag value="' + esc(t) + '"' + isChecked + ' />'
+            + esc(t)
+          + '</label>'
+        );
+      }).join('');
+      detailHtml =
+        '<div class="admin-field"><label>Suggested tags (edit before applying)</label>'
+          + '<div class="admin-tag-grid">' + tagChecks + '</div>'
         + '</div>';
     } else if (c.type === 'note') {
       detailHtml = '<div class="report-comment">' + esc(payload.note || '') + '</div>';
@@ -474,6 +492,13 @@
         return { label: lbl, value: isNaN(v) ? 50 : Math.max(0, Math.min(100, v)) };
       });
       return { stats: stats, statsSource: get('statsSource') };
+    }
+    if (c.type === 'tags') {
+      var tags = Array.prototype.slice
+        .call(el.querySelectorAll('[data-f-tag]:checked'))
+        .map(function (cb) { return cb.value; });
+      if (!tags.length) throw new Error('Select at least one tag.');
+      return { tags: tags };
     }
     return {};
   }

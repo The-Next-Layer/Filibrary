@@ -124,7 +124,7 @@ create policy "allow anonymous report inserts"
 create table if not exists public.filament_contributions (
   id uuid primary key default gen_random_uuid(),
   filament_slug text not null,
-  type text not null check (type in ('vendor','video','stats','note')),
+  type text not null check (type in ('vendor','video','stats','tags','note')),
   payload jsonb not null,
   contributor_fingerprint text,
   status text not null default 'pending' check (status in ('pending','applied','dismissed')),

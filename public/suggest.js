@@ -1,4 +1,6 @@
-// Filibrary "Suggest an edit" modal — small additions to an existing filament.
+// Filibrary "Suggest an edit" modal — users can fill in any of the tabs
+// (vendor, video, ratings, tags, note) and each filled tab is submitted as
+// its own contribution row.
 // Exposes window.openSuggest(slug, tab) for other scripts to call.
 (function () {
   var SUPABASE_URL  = window.__SUPABASE_URL__;
@@ -29,8 +31,16 @@
   var TABS = [
     { key: 'vendor', label: 'Vendor',  desc: 'A shop or brand that sells this filament.' },
     { key: 'video',  label: 'Video',   desc: 'A YouTube review or guide for this material.' },
-    { key: 'stats',  label: 'Ratings', desc: 'Rate each property 0–100. All six values required.' },
+    { key: 'stats',  label: 'Ratings', desc: 'Rate each property 0–100.' },
+    { key: 'tags',   label: 'Tags',    desc: 'Tags you think should be on this filament.' },
     { key: 'note',   label: 'Note',    desc: 'Anything else — we\'ll read and review.' },
+  ];
+  var STAT_LABELS = ['Strength','Heat','Printability','Weather','Flex','Finish'];
+  var ALL_TAGS = [
+    'Abrasive','Aesthetic','Beginner Friendly','Challenging','Chemical Resistant','Composite',
+    'Core Material','Durable','Eco / Bio-Based','Electronics','Engineering','Exotic','Flexible',
+    'High Heat','Hygroscopic','Lightweight','Outdoor','Print Enclosed',
+    'Specialty','Support',
   ];
 
   function buildModal(slug, activeTab) {
@@ -43,7 +53,7 @@
         + '<div class="suggest-modal-head">'
           + '<div>'
             + '<h3>Suggest an edit</h3>'
-            + '<p class="suggest-sub">Adding to <strong>' + esc(slug) + '</strong>. Thanks for helping keep the library accurate.</p>'
+            + '<p class="suggest-sub">Adding to <strong>' + esc(slug) + '</strong>. Fill in anything you like across the tabs — we\'ll review each.</p>'
           + '</div>'
           + '<button type="button" class="report-close" data-close aria-label="Close">'
             + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
@@ -79,18 +89,33 @@
 
           // Stats pane
           + '<div class="suggest-pane hidden" data-pane="stats">'
+            + '<p class="suggest-hint">Only included if you move at least one slider.</p>'
             + '<div class="stats-grid">'
-              + ['Strength','Heat','Printability','Weather','Flex','Finish'].map(function (lbl) {
+              + STAT_LABELS.map(function (lbl) {
                   return (
                     '<div class="stat-slider">'
                       + '<label for="s-' + lbl + '"><span>' + lbl + '</span><output data-out="' + lbl + '">50</output></label>'
-                      + '<input type="range" id="s-' + lbl + '" data-stat="' + lbl + '" min="0" max="100" value="50" />'
+                      + '<input type="range" id="s-' + lbl + '" data-stat="' + lbl + '" min="0" max="100" value="50" data-touched="0" />'
                     + '</div>'
                   );
                 }).join('')
             + '</div>'
             + '<label class="form-label" style="margin-top:0.75rem">Source (optional)</label>'
             + '<input class="form-input" name="stats_source" placeholder="e.g. Polymaker TDS, my own testing" maxlength="160" />'
+          + '</div>'
+
+          // Tags pane
+          + '<div class="suggest-pane hidden" data-pane="tags">'
+            + '<div class="suggest-tag-grid">'
+              + ALL_TAGS.map(function (tag) {
+                  return (
+                    '<label class="checkbox-label">'
+                      + '<input type="checkbox" name="tags" value="' + esc(tag) + '" />'
+                      + esc(tag)
+                    + '</label>'
+                  );
+                }).join('')
+            + '</div>'
           + '</div>'
 
           // Note pane
@@ -123,38 +148,49 @@
     modal.dataset.tab = key;
   }
 
-  async function submitContribution(slug, tab, form) {
-    var payload = {};
-    if (tab === 'vendor') {
-      var vLabel = form.querySelector('[name="vendor_label"]').value.trim();
-      var vUrl   = form.querySelector('[name="vendor_url"]').value.trim();
-      if (!vUrl) throw new Error('Vendor URL is required.');
-      payload = { label: vLabel, url: vUrl };
-    } else if (tab === 'video') {
-      var vidUrl = form.querySelector('[name="video_url"]').value.trim();
-      if (!vidUrl) throw new Error('Video URL is required.');
-      payload = {
-        title: form.querySelector('[name="video_title"]').value.trim(),
-        url: vidUrl,
-        thumbnailUrl: ytThumb(vidUrl),
-      };
-    } else if (tab === 'stats') {
-      var stats = [];
-      ['Strength','Heat','Printability','Weather','Flex','Finish'].forEach(function (lbl) {
-        var el = form.querySelector('[data-stat="' + lbl + '"]');
-        var v = el ? parseInt(el.value, 10) : 50;
-        stats.push({ label: lbl, value: isNaN(v) ? 50 : Math.max(0, Math.min(100, v)) });
+  // Returns { type, payload } for each tab that has meaningful data, in order.
+  function collectContributions(form) {
+    var out = [];
+    var vLabel = form.querySelector('[name="vendor_label"]').value.trim();
+    var vUrl   = form.querySelector('[name="vendor_url"]').value.trim();
+    if (vUrl) out.push({ type: 'vendor', payload: { label: vLabel, url: vUrl } });
+
+    var vidUrl = form.querySelector('[name="video_url"]').value.trim();
+    if (vidUrl) {
+      out.push({
+        type: 'video',
+        payload: {
+          title: form.querySelector('[name="video_title"]').value.trim(),
+          url: vidUrl,
+          thumbnailUrl: ytThumb(vidUrl),
+        },
       });
-      payload = {
-        stats: stats,
-        statsSource: form.querySelector('[name="stats_source"]').value.trim(),
-      };
-    } else if (tab === 'note') {
-      var note = form.querySelector('[name="note"]').value.trim();
-      if (!note) throw new Error('Please tell us what you\'d like changed.');
-      payload = { note: note };
     }
 
+    var sliderTouched = false;
+    var stats = STAT_LABELS.map(function (lbl) {
+      var el = form.querySelector('[data-stat="' + lbl + '"]');
+      if (el && el.getAttribute('data-touched') === '1') sliderTouched = true;
+      var v = el ? parseInt(el.value, 10) : 50;
+      return { label: lbl, value: isNaN(v) ? 50 : Math.max(0, Math.min(100, v)) };
+    });
+    var statsSource = form.querySelector('[name="stats_source"]').value.trim();
+    if (sliderTouched || statsSource) {
+      out.push({ type: 'stats', payload: { stats: stats, statsSource: statsSource } });
+    }
+
+    var tags = Array.prototype.slice
+      .call(form.querySelectorAll('input[name="tags"]:checked'))
+      .map(function (cb) { return cb.value; });
+    if (tags.length) out.push({ type: 'tags', payload: { tags: tags } });
+
+    var note = form.querySelector('[name="note"]').value.trim();
+    if (note) out.push({ type: 'note', payload: { note: note } });
+
+    return out;
+  }
+
+  async function postContribution(slug, contribution) {
     if (!SUPABASE_URL || !SUPABASE_ANON) {
       throw new Error('Suggestions are not configured yet.');
     }
@@ -168,8 +204,8 @@
       },
       body: JSON.stringify({
         filament_slug: slug,
-        type: tab,
-        payload: payload,
+        type: contribution.type,
+        payload: contribution.payload,
         contributor_fingerprint: fingerprint,
       }),
     });
@@ -185,11 +221,14 @@
     showTab(modal, modal.dataset.tab || 'vendor');
     requestAnimationFrame(function () { modal.classList.add('open'); });
 
-    // Live-update stats outputs
+    // Live-update stats outputs + mark sliders as touched when user moves them.
     modal.querySelectorAll('[data-stat]').forEach(function (inp) {
       var lbl = inp.getAttribute('data-stat');
       var out = modal.querySelector('[data-out="' + lbl + '"]');
-      inp.addEventListener('input', function () { if (out) out.textContent = inp.value; });
+      inp.addEventListener('input', function () {
+        if (out) out.textContent = inp.value;
+        inp.setAttribute('data-touched', '1');
+      });
     });
 
     function close() {
@@ -217,14 +256,25 @@
       ev.preventDefault();
       msg.textContent = '';
       msg.className = 'report-msg';
+
+      var items = collectContributions(form);
+      if (items.length === 0) {
+        msg.textContent = 'Fill in at least one tab before sending.';
+        msg.classList.add('error');
+        return;
+      }
+
       var submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       try {
-        await submitContribution(slug, modal.dataset.tab, form);
-        msg.textContent = 'Thanks — we\'ll review your suggestion.';
+        for (var i = 0; i < items.length; i++) {
+          await postContribution(slug, items[i]);
+        }
+        var word = items.length === 1 ? 'suggestion' : 'suggestions';
+        msg.textContent = 'Thanks — we\'ll review your ' + items.length + ' ' + word + '.';
         msg.classList.add('ok');
-        setTimeout(close, 1200);
+        setTimeout(close, 1400);
       } catch (err) {
         msg.textContent = (err && err.message) || 'Failed to send suggestion.';
         msg.classList.add('error');
