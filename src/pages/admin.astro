@@ -39,6 +39,9 @@ import Layout from '../layouts/Layout.astro';
           <button class="admin-tab active" data-tab="submissions" role="tab">
             Submissions <span class="admin-count" id="count-submissions">0</span>
           </button>
+          <button class="admin-tab" data-tab="contributions" role="tab">
+            Contributions <span class="admin-count" id="count-contributions">0</span>
+          </button>
           <button class="admin-tab" data-tab="reports" role="tab">
             Reports <span class="admin-count" id="count-reports">0</span>
           </button>
@@ -46,11 +49,15 @@ import Layout from '../layouts/Layout.astro';
 
         <div id="tab-submissions" class="admin-tab-panel">
           <div id="submissions-list" class="admin-list"></div>
-          <p class="admin-empty hidden" id="submissions-empty">No pending submissions. 🎉</p>
+          <p class="admin-empty hidden" id="submissions-empty">No pending submissions.</p>
+        </div>
+        <div id="tab-contributions" class="admin-tab-panel hidden">
+          <div id="contributions-list" class="admin-list"></div>
+          <p class="admin-empty hidden" id="contributions-empty">No pending contributions.</p>
         </div>
         <div id="tab-reports" class="admin-tab-panel hidden">
           <div id="reports-list" class="admin-list"></div>
-          <p class="admin-empty hidden" id="reports-empty">No open reports. 🎉</p>
+          <p class="admin-empty hidden" id="reports-empty">No open reports.</p>
         </div>
 
         <div class="admin-toast" id="admin-toast" aria-live="polite"></div>

@@ -127,6 +127,103 @@ function insertIntoSeed(src: string, e: FilamentEntry): string {
   return src.trimEnd().replace(re, `$1,\n${block}\n];\n`);
 }
 
+// ── Editing existing filaments ───────────────────────────────────────────
+// Finds the object in seed.ts with matching slug, returns [start, end] inclusive.
+function filamentObjectBounds(src: string, slug: string): [number, number] {
+  const marker = `"slug": "${slug}"`;
+  const slugIdx = src.indexOf(marker);
+  if (slugIdx === -1) throw new Error(`Filament not found in seed.ts: ${slug}`);
+  let start = slugIdx;
+  let depth = 0;
+  for (let i = slugIdx; i >= 0; i--) {
+    const c = src[i];
+    if (c === '}') depth++;
+    else if (c === '{') {
+      if (depth === 0) { start = i; break; }
+      depth--;
+    }
+  }
+  let end = src.length;
+  depth = 1;
+  for (let i = start + 1; i < src.length; i++) {
+    const c = src[i];
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  return [start, end];
+}
+
+// Finds `"<key>": [` inside an object's bounds and returns [openBracket, closeBracket].
+function innerArrayBounds(src: string, objStart: number, objEnd: number, key: string): [number, number] {
+  const slice = src.slice(objStart, objEnd + 1);
+  const re = new RegExp(`"${key}"\\s*:\\s*\\[`);
+  const m = re.exec(slice);
+  if (!m) throw new Error(`Key "${key}" not found`);
+  const arrOpen = objStart + m.index + m[0].length - 1;
+  let depth = 1;
+  let arrClose = src.length;
+  for (let i = arrOpen + 1; i < src.length; i++) {
+    const c = src[i];
+    if (c === '[') depth++;
+    else if (c === ']') {
+      depth--;
+      if (depth === 0) { arrClose = i; break; }
+    }
+  }
+  return [arrOpen, arrClose];
+}
+
+function appendToArray(src: string, slug: string, key: string, entry: unknown): string {
+  const [objStart, objEnd] = filamentObjectBounds(src, slug);
+  const [arrOpen, arrClose] = innerArrayBounds(src, objStart, objEnd, key);
+  const entryJsonStr = JSON.stringify(entry, null, 2);
+  // Inner array entries sit at 6-space indent in this file's layout.
+  const indented = entryJsonStr.split('\n').map((l) => '      ' + l).join('\n');
+  const inner = src.slice(arrOpen + 1, arrClose);
+  const hasEntries = inner.trim().length > 0;
+  const replacement = hasEntries
+    ? `${src.slice(arrOpen, arrClose).replace(/\s*$/, '')},\n${indented}\n    `
+    : `[\n${indented}\n    `;
+  return src.slice(0, arrOpen) + replacement + src.slice(arrClose);
+}
+
+// Replaces the contents of an inner array entirely (used for stats).
+function replaceArray(src: string, slug: string, key: string, items: unknown[]): string {
+  const [objStart, objEnd] = filamentObjectBounds(src, slug);
+  const [arrOpen, arrClose] = innerArrayBounds(src, objStart, objEnd, key);
+  if (items.length === 0) {
+    return src.slice(0, arrOpen) + '[]' + src.slice(arrClose + 1);
+  }
+  const body = items
+    .map((it) => JSON.stringify(it, null, 2).split('\n').map((l) => '      ' + l).join('\n'))
+    .join(',\n');
+  return src.slice(0, arrOpen) + `[\n${body}\n    ]` + src.slice(arrClose + 1);
+}
+
+// Replaces a string-valued field like "statsSource": "...".
+function replaceStringField(src: string, slug: string, key: string, value: string): string {
+  const [objStart, objEnd] = filamentObjectBounds(src, slug);
+  const slice = src.slice(objStart, objEnd + 1);
+  const re = new RegExp(`("${key}"\\s*:\\s*)(null|"(?:[^"\\\\]|\\\\.)*")`);
+  const m = re.exec(slice);
+  if (!m) {
+    // Key doesn't exist — insert before closing brace, preserving trailing comma semantics.
+    const insertAt = objEnd; // position of closing `}`
+    const insertion = `,\n    "${key}": ${JSON.stringify(value)}\n  `;
+    // Find last non-whitespace before `}`; if it's a comma, skip leading comma.
+    let j = insertAt - 1;
+    while (j > objStart && /\s/.test(src[j])) j--;
+    const needsLeadingComma = src[j] !== ',' && src[j] !== '{';
+    const ins = needsLeadingComma ? insertion : insertion.replace(/^,\n/, '\n');
+    return src.slice(0, insertAt) + ins + src.slice(insertAt);
+  }
+  const abs = objStart + m.index;
+  return src.slice(0, abs) + m[1] + JSON.stringify(value) + src.slice(abs + m[0].length);
+}
+
 async function commitFilament(entry: FilamentEntry, message: string) {
   const repo   = need('GITHUB_REPO');
   const branch = need('GITHUB_BRANCH');
@@ -243,6 +340,93 @@ async function rejectSubmission(body: Record<string, any>) {
   });
   return { ok: true };
 }
+async function listContributions() {
+  return sb('/filament_contributions?status=eq.pending&order=created_at.desc');
+}
+
+async function applyContribution(body: Record<string, any>) {
+  const id = String(body.contribution_id || '');
+  if (!id) throw new Error('contribution_id required');
+  const type = String(body.type || '');
+  const slug = String(body.filament_slug || '');
+  if (!slug) throw new Error('filament_slug required');
+  const payload = body.payload || {};
+
+  const repo   = need('GITHUB_REPO');
+  const branch = need('GITHUB_BRANCH');
+  const path   = need('SEED_PATH');
+  const cur = await gh(
+    `/repos/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`
+  );
+  const src = b64decode(cur.content);
+  let next = src;
+  let commitMsg = '';
+
+  if (type === 'vendor') {
+    const label = String(payload.label || '').trim();
+    const url   = String(payload.url   || '').trim();
+    if (!url) throw new Error('vendor url required');
+    next = appendToArray(src, slug, 'purchaseLinks', { label: label || url, url });
+    commitMsg = `Add vendor "${label || url}" to ${slug}`;
+  } else if (type === 'video') {
+    const title = String(payload.title || '').trim();
+    const url   = String(payload.url   || '').trim();
+    const thumb = String(payload.thumbnailUrl || '').trim();
+    if (!url) throw new Error('video url required');
+    next = appendToArray(src, slug, 'videoReferences', {
+      title: title || url,
+      url,
+      thumbnailUrl: thumb,
+    });
+    commitMsg = `Add video reference to ${slug}`;
+  } else if (type === 'stats') {
+    const stats = Array.isArray(payload.stats) ? sanitizeStats(payload.stats) : [];
+    if (stats.length !== 6) throw new Error('stats must have all 6 values');
+    next = replaceArray(src, slug, 'stats', stats);
+    const source = String(payload.statsSource || '').trim();
+    if (source) next = replaceStringField(next, slug, 'statsSource', source);
+    commitMsg = `Update performance ratings for ${slug}`;
+  } else if (type === 'note') {
+    throw new Error('notes must be resolved manually — use dismiss_contribution or edit seed.ts directly');
+  } else {
+    throw new Error('unknown contribution type: ' + type);
+  }
+
+  if (next === src) throw new Error('no changes generated');
+  await gh(`/repos/${repo}/contents/${encodeURIComponent(path)}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: commitMsg,
+      content: b64encode(next),
+      sha: cur.sha,
+      branch,
+    }),
+  });
+  await sb(`/filament_contributions?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      status: 'applied',
+      applied_notes: body.applied_notes || null,
+      applied_at: new Date().toISOString(),
+    }),
+  });
+  return { ok: true };
+}
+
+async function dismissContribution(body: Record<string, any>) {
+  const id = String(body.contribution_id || '');
+  if (!id) throw new Error('contribution_id required');
+  await sb(`/filament_contributions?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      status: 'dismissed',
+      applied_notes: body.applied_notes || null,
+      applied_at: new Date().toISOString(),
+    }),
+  });
+  return { ok: true };
+}
+
 async function updateReport(body: Record<string, any>, status: 'resolved' | 'dismissed') {
   const id = String(body.report_id || '');
   if (!id) throw new Error('report_id required');
@@ -274,13 +458,16 @@ serve(async (req) => {
   try {
     const action = String(body.action || '');
     switch (action) {
-      case 'list_pending':       return json({ ok: true, rows: await listPending() });
-      case 'list_reports':       return json({ ok: true, rows: await listReports() });
-      case 'approve_submission': return json(await approveSubmission(body));
-      case 'reject_submission':  return json(await rejectSubmission(body));
-      case 'resolve_report':     return json(await updateReport(body, 'resolved'));
-      case 'dismiss_report':     return json(await updateReport(body, 'dismissed'));
-      default:                   return json({ error: 'unknown action: ' + action }, 400);
+      case 'list_pending':          return json({ ok: true, rows: await listPending() });
+      case 'list_reports':          return json({ ok: true, rows: await listReports() });
+      case 'list_contributions':    return json({ ok: true, rows: await listContributions() });
+      case 'approve_submission':    return json(await approveSubmission(body));
+      case 'reject_submission':     return json(await rejectSubmission(body));
+      case 'resolve_report':        return json(await updateReport(body, 'resolved'));
+      case 'dismiss_report':        return json(await updateReport(body, 'dismissed'));
+      case 'apply_contribution':    return json(await applyContribution(body));
+      case 'dismiss_contribution':  return json(await dismissContribution(body));
+      default:                      return json({ error: 'unknown action: ' + action }, 400);
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

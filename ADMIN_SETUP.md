@@ -10,6 +10,7 @@ In Supabase → **SQL Editor**, run these in order (only needed once per project
 
 1. `filibrary-next/supabase/migrations/002_submission_stats.sql` — adds stat columns to community submissions
 2. `filibrary-next/supabase/migrations/003_reports.sql` — creates the reports table
+3. `filibrary-next/supabase/migrations/004_contributions.sql` — creates the contributions table (partial-info suggestions)
 
 (If this is a brand-new Supabase project, you can skip the migrations and just run `filibrary-next/supabase/schema.sql` instead — it's kept in sync.)
 
@@ -74,13 +75,19 @@ supabase secrets set ADMIN_PASSWORD=choose-something-strong \
 
 - Go to **https://filament.thenextlayer.com/admin** (or wherever your site lives).
 - Enter the password from step 4.
-- You'll see two tabs: **Submissions** and **Reports**.
+- You'll see three tabs: **Submissions**, **Contributions**, and **Reports**.
 
 ### Submission workflow
 1. A community member submits a filament — it lands in the Submissions tab.
 2. You edit any fields you want (summary, tags, ratings, etc.) and click **Approve & publish**.
 3. The edge function commits the new filament to `seed.ts` → GitHub Actions rebuilds → Hostinger FTP deploy. Total time ~90 seconds.
 4. Need to reject it? Click **Reject** with an optional note.
+
+### Contribution workflow
+1. Someone clicks "Suggest an edit" on a filament (or hits an empty-state CTA like "Suggest a vendor") — they pick a tab (vendor / video / ratings / note) and send a small payload.
+2. It lands in the Contributions tab with the editable fields pre-filled from what they submitted.
+3. You adjust if needed and click **Apply to filament** for vendor/video/ratings. The edge function finds the filament in `seed.ts`, patches the relevant inner array (or replaces stats), commits → the site rebuilds automatically. ~90s to live.
+4. For type = *note*, there's nothing to auto-apply — read it, act on it yourself if warranted (edit `seed.ts` directly), then **Dismiss**.
 
 ### Report workflow
 1. Someone clicks "Report an issue" on a filament — it lands in the Reports tab.

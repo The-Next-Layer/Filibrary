@@ -108,11 +108,15 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
           ) : (
             <section class="detail-section stats-empty">
               <h2>Performance</h2>
-              <p>Detailed stats for this material are not yet available. <a href="/submit">Have data? Submit it.</a></p>
+              <p>Detailed ratings for this material aren't available yet. <button class="link-btn" type="button" data-suggest={f.slug} data-suggest-tab="stats">Suggest ratings</button>.</p>
             </section>
           )}
 
           <section class="detail-report-row">
+            <button class="suggest-link" type="button" data-suggest={f.slug} data-suggest-tab="vendor">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Suggest an edit
+            </button>
             <button class="report-btn" type="button" data-slug={f.slug}>
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
               Report an issue
@@ -152,7 +156,7 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
                 ))}
               </div>
             ) : (
-              <p class="no-links">No purchase links yet. <a href="/submit">Know a good source? Submit it.</a></p>
+              <p class="no-links">No purchase links yet. <button class="link-btn" type="button" data-suggest={f.slug} data-suggest-tab="vendor">Suggest a vendor</button>.</p>
             )}
           </div>
 
@@ -229,5 +233,7 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
   .related-inline-list li:last-child .related-inline-link { border-bottom: none; }
   .related-inline-link:hover .related-short { color: var(--accent-dark); }
 
-  .detail-report-row { display: flex; justify-content: flex-end; margin: -0.5rem 0 1rem; }
+  .detail-report-row { display: flex; justify-content: flex-end; gap: 0.25rem; margin: -0.5rem 0 1rem; flex-wrap: wrap; }
+  .link-btn { background: none; border: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: inherit; font-family: inherit; padding: 0; }
+  .link-btn:hover { text-decoration: underline; }
 </style>

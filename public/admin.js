@@ -13,18 +13,21 @@
   ];
   var STAT_LABELS = ['Strength','Heat','Printability','Weather','Flex','Finish'];
 
-  var gate     = document.getElementById('admin-gate');
-  var dash     = document.getElementById('admin-dash');
-  var loginF   = document.getElementById('login-form');
-  var pwIn     = document.getElementById('admin-password');
-  var errEl    = document.getElementById('admin-error');
-  var subList  = document.getElementById('submissions-list');
-  var repList  = document.getElementById('reports-list');
-  var subEmpty = document.getElementById('submissions-empty');
-  var repEmpty = document.getElementById('reports-empty');
-  var cntSub   = document.getElementById('count-submissions');
-  var cntRep   = document.getElementById('count-reports');
-  var toast    = document.getElementById('admin-toast');
+  var gate      = document.getElementById('admin-gate');
+  var dash      = document.getElementById('admin-dash');
+  var loginF    = document.getElementById('login-form');
+  var pwIn      = document.getElementById('admin-password');
+  var errEl     = document.getElementById('admin-error');
+  var subList   = document.getElementById('submissions-list');
+  var repList   = document.getElementById('reports-list');
+  var conList   = document.getElementById('contributions-list');
+  var subEmpty  = document.getElementById('submissions-empty');
+  var repEmpty  = document.getElementById('reports-empty');
+  var conEmpty  = document.getElementById('contributions-empty');
+  var cntSub    = document.getElementById('count-submissions');
+  var cntRep    = document.getElementById('count-reports');
+  var cntCon    = document.getElementById('count-contributions');
+  var toast     = document.getElementById('admin-toast');
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -100,6 +103,7 @@
       btn.classList.add('active');
       var key = btn.getAttribute('data-tab');
       document.getElementById('tab-submissions').classList.toggle('hidden', key !== 'submissions');
+      document.getElementById('tab-contributions').classList.toggle('hidden', key !== 'contributions');
       document.getElementById('tab-reports').classList.toggle('hidden', key !== 'reports');
     });
   });
@@ -357,23 +361,185 @@
     }
   }
 
+  // ── Contributions ──
+  var CONTRIB_TYPE_LABELS = {
+    vendor: 'New vendor',
+    video:  'New video',
+    stats:  'Performance ratings',
+    note:   'Note',
+  };
+
+  function renderContributionCard(c) {
+    var el = document.createElement('div');
+    el.className = 'admin-item';
+    el.dataset.id = c.id;
+    var payload = c.payload || {};
+    var detailHtml = '';
+
+    if (c.type === 'vendor') {
+      detailHtml =
+        '<div class="admin-field"><label>Label</label>'
+          + '<input class="form-input" data-f="label" value="' + esc(payload.label || '') + '" />'
+        + '</div>'
+        + '<div class="admin-field"><label>URL</label>'
+          + '<input class="form-input" data-f="url" value="' + esc(payload.url || '') + '" />'
+        + '</div>';
+    } else if (c.type === 'video') {
+      detailHtml =
+        '<div class="admin-row-2">'
+          + '<div class="admin-field"><label>Title</label>'
+            + '<input class="form-input" data-f="title" value="' + esc(payload.title || '') + '" />'
+          + '</div>'
+          + '<div class="admin-field"><label>URL</label>'
+            + '<input class="form-input" data-f="url" value="' + esc(payload.url || '') + '" />'
+          + '</div>'
+        + '</div>'
+        + '<div class="admin-field"><label>Thumbnail</label>'
+          + '<input class="form-input" data-f="thumbnailUrl" value="' + esc(payload.thumbnailUrl || '') + '" />'
+        + '</div>';
+    } else if (c.type === 'stats') {
+      var stats = Array.isArray(payload.stats) ? payload.stats : [];
+      var byLabel = {};
+      stats.forEach(function (p) { if (p && p.label) byLabel[p.label] = p.value; });
+      var sliders = STAT_LABELS.map(function (lbl) {
+        var v = typeof byLabel[lbl] === 'number' ? byLabel[lbl] : 50;
+        return (
+          '<div class="admin-stat">'
+            + '<label><span>' + lbl + '</span><output data-stat-out="' + lbl + '">' + v + '</output></label>'
+            + '<input type="range" min="0" max="100" value="' + v + '" data-stat="' + lbl + '" />'
+          + '</div>'
+        );
+      }).join('');
+      detailHtml =
+        '<div class="admin-field"><label>Performance ratings</label>'
+          + '<div class="admin-stats-grid">' + sliders + '</div>'
+        + '</div>'
+        + '<div class="admin-field"><label>Source</label>'
+          + '<input class="form-input" data-f="statsSource" value="' + esc(payload.statsSource || '') + '" />'
+        + '</div>';
+    } else if (c.type === 'note') {
+      detailHtml = '<div class="report-comment">' + esc(payload.note || '') + '</div>';
+    }
+
+    var applyBtn = c.type === 'note'
+      ? '<button type="button" class="btn btn-primary" data-action="dismiss">Dismiss</button>'
+      : '<button type="button" class="btn btn-primary" data-action="apply">Apply to filament</button>';
+
+    el.innerHTML =
+      '<div class="admin-item-head">'
+        + '<span class="admin-item-short">' + esc(c.filament_slug || '') + '</span>'
+        + '<span class="report-reason">' + esc(CONTRIB_TYPE_LABELS[c.type] || c.type) + '</span>'
+        + '<span class="admin-item-meta">Submitted ' + esc(ts(c.created_at)) + '</span>'
+      + '</div>'
+      + detailHtml
+      + '<div class="admin-actions">'
+        + '<a class="btn btn-outline" href="/filaments/' + encodeURIComponent(c.filament_slug) + '" target="_blank" rel="noopener">Open filament ↗</a>'
+        + (c.type !== 'note' ? '<button type="button" class="btn btn-ghost" data-action="dismiss">Dismiss</button>' : '')
+        + applyBtn
+      + '</div>';
+
+    el.querySelectorAll('[data-stat]').forEach(function (inp) {
+      var lbl = inp.getAttribute('data-stat');
+      var out = el.querySelector('[data-stat-out="' + lbl + '"]');
+      inp.addEventListener('input', function () { if (out) out.textContent = inp.value; });
+    });
+
+    var applyBtnEl = el.querySelector('[data-action="apply"]');
+    if (applyBtnEl) applyBtnEl.addEventListener('click', function () { applyContribution(el, c); });
+    var dismissBtnEl = el.querySelector('[data-action="dismiss"]');
+    if (dismissBtnEl) dismissBtnEl.addEventListener('click', function () { dismissContribution(el); });
+
+    return el;
+  }
+
+  function readContributionPayload(el, c) {
+    function get(f) {
+      var e = el.querySelector('[data-f="' + f + '"]');
+      return e ? String(e.value || '').trim() : '';
+    }
+    if (c.type === 'vendor') {
+      var url = get('url');
+      if (!url) throw new Error('URL is required.');
+      return { label: get('label') || url, url: url };
+    }
+    if (c.type === 'video') {
+      var vurl = get('url');
+      if (!vurl) throw new Error('URL is required.');
+      return { title: get('title') || vurl, url: vurl, thumbnailUrl: get('thumbnailUrl') };
+    }
+    if (c.type === 'stats') {
+      var stats = STAT_LABELS.map(function (lbl) {
+        var inp = el.querySelector('[data-stat="' + lbl + '"]');
+        var v = inp ? parseInt(inp.value, 10) : 50;
+        return { label: lbl, value: isNaN(v) ? 50 : Math.max(0, Math.min(100, v)) };
+      });
+      return { stats: stats, statsSource: get('statsSource') };
+    }
+    return {};
+  }
+
+  async function applyContribution(el, c) {
+    var btn = el.querySelector('[data-action="apply"]');
+    var payload;
+    try { payload = readContributionPayload(el, c); }
+    catch (err) { showToast(err.message, 'error'); return; }
+    btn.disabled = true; btn.textContent = 'Applying…';
+    try {
+      await api('apply_contribution', {
+        contribution_id: c.id,
+        filament_slug: c.filament_slug,
+        type: c.type,
+        payload: payload,
+      });
+      showToast('Applied. Deploy will rebuild in ~90s.', 'ok');
+      el.remove();
+      updateCounts();
+    } catch (err) {
+      showToast(err.message || 'Failed to apply', 'error');
+      btn.disabled = false; btn.textContent = 'Apply to filament';
+    }
+  }
+
+  async function dismissContribution(el) {
+    var id = el.dataset.id;
+    var note = prompt('Reason for dismissing (optional):') || '';
+    try {
+      await api('dismiss_contribution', { contribution_id: id, applied_notes: note });
+      showToast('Dismissed.', 'ok');
+      el.remove();
+      updateCounts();
+    } catch (err) {
+      showToast(err.message || 'Failed', 'error');
+    }
+  }
+
   function updateCounts() {
     var n1 = subList.children.length;
     var n2 = repList.children.length;
+    var n3 = conList.children.length;
     cntSub.textContent = n1;
     cntRep.textContent = n2;
+    cntCon.textContent = n3;
     subEmpty.classList.toggle('hidden', n1 > 0);
     repEmpty.classList.toggle('hidden', n2 > 0);
+    conEmpty.classList.toggle('hidden', n3 > 0);
   }
 
   async function refresh() {
     subList.innerHTML = '';
     repList.innerHTML = '';
+    conList.innerHTML = '';
     try {
       var subs = await api('list_pending');
       (subs.rows || []).forEach(function (s) { subList.appendChild(renderSubmissionCard(s)); });
     } catch (err) {
       showToast(err.message || 'Failed to load submissions', 'error');
+    }
+    try {
+      var cons = await api('list_contributions');
+      (cons.rows || []).forEach(function (c) { conList.appendChild(renderContributionCard(c)); });
+    } catch (err) {
+      showToast(err.message || 'Failed to load contributions', 'error');
     }
     try {
       var reps = await api('list_reports');

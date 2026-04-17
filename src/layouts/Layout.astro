@@ -113,6 +113,7 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
   </footer>
 
   <script is:inline src="/report.js"></script>
+  <script is:inline src="/suggest.js"></script>
 
   <script>
     // Mobile nav toggle
@@ -428,7 +429,15 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
   .related-full { font-size: 0.85rem; color: var(--text); }
 
   /* ── Report button + modal ── */
-  .panel-footer-row { padding-top: 0.5rem; margin-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+  .panel-footer-row { padding-top: 0.5rem; margin-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.25rem; flex-wrap: wrap; }
+  .suggest-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: transparent; color: var(--text-muted); border: 1px solid transparent;
+    padding: 0.45rem 0.7rem; border-radius: 8px; font-size: 0.78rem; font-weight: 500;
+    cursor: pointer; transition: color 0.15s, background 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  .suggest-link:hover { color: var(--accent); background: var(--accent-soft); border-color: rgba(249,115,22,0.25); }
   .report-btn {
     display: inline-flex; align-items: center; gap: 0.4rem;
     background: transparent; color: var(--text-dim); border: 1px solid transparent;
@@ -458,5 +467,35 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
   .report-msg { font-size: 0.85rem; margin-top: 0.65rem; min-height: 1em; }
   .report-msg.ok    { color: #15803d; }
   .report-msg.error { color: #b91c1c; }
+
+  /* ── Suggest modal (extends report-modal pattern) ── */
+  .suggest-modal-wrap { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
+  .suggest-modal-wrap.open { opacity: 1; pointer-events: auto; }
+  .suggest-modal-backdrop { position: absolute; inset: 0; background: var(--overlay); }
+  .suggest-modal {
+    position: relative; background: var(--bg-elevated); border: 1.5px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    width: 100%; max-width: 520px; padding: 1.25rem 1.25rem 1rem;
+    transform: translateY(8px); transition: transform 0.22s ease;
+    max-height: calc(100vh - 2rem); overflow-y: auto;
+  }
+  .suggest-modal-wrap.open .suggest-modal { transform: translateY(0); }
+  .suggest-modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.85rem; }
+  .suggest-modal-head h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .suggest-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+  .suggest-tabs { display: flex; gap: 0.15rem; border-bottom: 1.5px solid var(--border); margin-bottom: 0.85rem; overflow-x: auto; scrollbar-width: none; }
+  .suggest-tabs::-webkit-scrollbar { display: none; }
+  .suggest-tab { background: transparent; border: none; border-bottom: 2px solid transparent; padding: 0.55rem 0.75rem; font-size: 0.88rem; font-weight: 600; color: var(--text-muted); cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .suggest-tab:hover { color: var(--text); }
+  .suggest-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .suggest-desc { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.8rem; min-height: 1.2em; }
+
+  .suggest-pane .form-label:first-child { margin-top: 0; }
+  .suggest-modal .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.6rem 1rem; }
+  .suggest-modal .stat-slider { display: flex; flex-direction: column; gap: 0.25rem; }
+  .suggest-modal .stat-slider > label { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  .suggest-modal .stat-slider output { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .suggest-modal .stat-slider input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 </style>

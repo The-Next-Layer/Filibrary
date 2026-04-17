@@ -120,3 +120,24 @@ create policy "allow anonymous report inserts"
   for insert
   to anon, authenticated
   with check (true);
+
+create table if not exists public.filament_contributions (
+  id uuid primary key default gen_random_uuid(),
+  filament_slug text not null,
+  type text not null check (type in ('vendor','video','stats','note')),
+  payload jsonb not null,
+  contributor_fingerprint text,
+  status text not null default 'pending' check (status in ('pending','applied','dismissed')),
+  applied_notes text,
+  created_at timestamptz not null default now(),
+  applied_at timestamptz
+);
+
+alter table public.filament_contributions enable row level security;
+
+drop policy if exists "allow anonymous contribution inserts" on public.filament_contributions;
+create policy "allow anonymous contribution inserts"
+  on public.filament_contributions
+  for insert
+  to anon, authenticated
+  with check (true);

@@ -97,7 +97,9 @@
       statsBlock =
         '<section class="panel-section stats-empty">'
           + '<h3>Performance</h3>'
-          + '<p>Detailed stats for this material are not yet available. <a href="/submit">Have data? Submit it.</a></p>'
+          + '<p>Detailed ratings for this material aren\'t available yet. '
+            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="stats">Suggest ratings</button>.'
+          + '</p>'
         + '</section>';
     }
 
@@ -117,7 +119,9 @@
       buyBlock =
         '<section class="panel-section">'
           + '<h3>Where to Buy</h3>'
-          + '<p class="no-links">No purchase links yet. <a href="/submit">Know a good source? Submit it.</a></p>'
+          + '<p class="no-links">No purchase links yet. '
+            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="vendor">Suggest a vendor</button>.'
+          + '</p>'
         + '</section>';
     }
 
@@ -162,6 +166,10 @@
 
     var reportBlock =
       '<section class="panel-footer-row">'
+        + '<button class="suggest-link" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="vendor">'
+          + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+          + 'Suggest an edit'
+        + '</button>'
         + '<button class="report-btn" id="report-btn" type="button" data-slug="' + esc(f.slug) + '">'
           + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'
           + 'Report an issue'
