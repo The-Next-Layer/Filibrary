@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Admin" description="Filibrary admin — review submissions and reports.">
+
+  <div class="admin-page">
+    <div class="container">
+
+      <!-- Login gate -->
+      <section class="admin-gate" id="admin-gate">
+        <div class="admin-card">
+          <h1>Admin</h1>
+          <p class="admin-sub">Enter the admin password to review submissions and reports.</p>
+          <form id="login-form" class="admin-login-form">
+            <input type="password" id="admin-password" class="form-input" placeholder="Admin password" autocomplete="current-password" required />
+            <div class="admin-login-row">
+              <button type="submit" class="btn btn-primary">Sign in</button>
+              <span class="admin-error" id="admin-error"></span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Dashboard (hidden until authed) -->
+      <section class="admin-dash hidden" id="admin-dash">
+        <header class="admin-dash-head">
+          <div>
+            <h1>Admin</h1>
+            <p class="admin-sub">Review community submissions and reports.</p>
+          </div>
+          <div class="admin-dash-actions">
+            <button type="button" class="btn btn-outline" id="refresh-btn">Refresh</button>
+            <button type="button" class="btn btn-outline" id="signout-btn">Sign out</button>
+          </div>
+        </header>
+
+        <div class="admin-tabs" role="tablist">
+          <button class="admin-tab active" data-tab="submissions" role="tab">
+            Submissions <span class="admin-count" id="count-submissions">0</span>
+          </button>
+          <button class="admin-tab" data-tab="reports" role="tab">
+            Reports <span class="admin-count" id="count-reports">0</span>
+          </button>
+        </div>
+
+        <div id="tab-submissions" class="admin-tab-panel">
+          <div id="submissions-list" class="admin-list"></div>
+          <p class="admin-empty hidden" id="submissions-empty">No pending submissions. 🎉</p>
+        </div>
+        <div id="tab-reports" class="admin-tab-panel hidden">
+          <div id="reports-list" class="admin-list"></div>
+          <p class="admin-empty hidden" id="reports-empty">No open reports. 🎉</p>
+        </div>
+
+        <div class="admin-toast" id="admin-toast" aria-live="polite"></div>
+      </section>
+
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .admin-page { padding: 2.5rem 0 5rem; }
+  .admin-gate { max-width: 420px; margin: 3rem auto; }
+  .admin-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
+  .admin-card h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; color: var(--text); }
+  .admin-sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+  .admin-login-form { display: flex; flex-direction: column; gap: 0.75rem; }
+  .admin-login-row { display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap; }
+  .admin-error { font-size: 0.85rem; color: #b91c1c; }
+  .hidden { display: none !important; }
+
+  .admin-dash-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+  .admin-dash-head h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+  .admin-dash-actions { display: flex; gap: 0.5rem; }
+
+  .admin-tabs { display: flex; gap: 0.25rem; margin-bottom: 1.25rem; border-bottom: 1.5px solid var(--border); }
+  .admin-tab {
+    background: transparent; border: none; border-bottom: 2px solid transparent;
+    padding: 0.6rem 0.85rem; font-size: 0.92rem; font-weight: 600; color: var(--text-muted);
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .admin-tab:hover { color: var(--text); }
+  .admin-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .admin-count { background: var(--surface-alt); color: var(--text-muted); border-radius: 999px; padding: 0.05rem 0.5rem; font-size: 0.72rem; font-weight: 700; }
+  .admin-tab.active .admin-count { background: var(--accent-soft); color: var(--accent); }
+
+  .admin-empty { text-align: center; color: var(--text-muted); font-size: 0.95rem; padding: 3rem 1rem; }
+
+  .admin-list { display: flex; flex-direction: column; gap: 1rem; }
+  .admin-item { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .admin-item-head { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .admin-item-short { font-size: 0.95rem; font-weight: 800; color: var(--accent); background: var(--accent-soft); border: 1.5px solid rgba(249,115,22,0.25); padding: 0.15rem 0.6rem; border-radius: 6px; }
+  .admin-item-full { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .admin-item-meta { font-size: 0.78rem; color: var(--text-dim); margin-left: auto; }
+  .admin-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
+  .admin-field label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+  .admin-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  @media (max-width: 560px) { .admin-row-2 { grid-template-columns: 1fr; } }
+  .admin-stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.6rem 1rem; }
+  .admin-stat { display: flex; flex-direction: column; gap: 0.25rem; }
+  .admin-stat label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600; color: var(--text); text-transform: none; letter-spacing: 0; }
+  .admin-stat input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .admin-tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.3rem; }
+  .admin-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .btn-danger { background: #ef4444; color: #fff; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .report-reason { background: var(--surface-alt); color: var(--text); font-size: 0.78rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 999px; border: 1px solid var(--border); }
+  .report-comment { font-size: 0.92rem; color: var(--text); line-height: 1.55; padding: 0.75rem 0.9rem; background: var(--surface-alt); border-radius: 8px; margin: 0.4rem 0 0.6rem; }
+
+  .admin-toast { position: fixed; bottom: 1.25rem; right: 1.25rem; background: var(--bg-elevated); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.65rem 1rem; font-size: 0.88rem; box-shadow: var(--shadow-lg); max-width: 360px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; }
+  .admin-toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .admin-toast.error { border-color: rgba(239,68,68,0.45); color: #ef4444; }
+  .admin-toast.ok    { border-color: rgba(34,197,94,0.4); color: #15803d; }
+</style>
+
+<script is:inline src="/admin.js"></script>

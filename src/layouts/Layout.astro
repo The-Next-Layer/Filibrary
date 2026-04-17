@@ -12,6 +12,9 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://filibrary.thenextlayer.com');
 
 const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenextlayer.com&no_recurring=0&item_name=Support+Filibrary+%E2%80%94+the+3D+printer+filament+library&currency_code=USD';
+
+const SUPABASE_URL  = import.meta.env.PUBLIC_SUPABASE_URL  || '';
+const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 
 <!DOCTYPE html>
@@ -32,6 +35,10 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script is:inline define:vars={{ SUPABASE_URL, SUPABASE_ANON }}>
+    window.__SUPABASE_URL__  = SUPABASE_URL;
+    window.__SUPABASE_ANON__ = SUPABASE_ANON;
+  </script>
   <script is:inline>
     // Apply theme before paint to avoid flash.
     (function () {
@@ -104,6 +111,8 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
       </div>
     </div>
   </footer>
+
+  <script is:inline src="/report.js"></script>
 
   <script>
     // Mobile nav toggle
@@ -417,5 +426,37 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
   .related-link:hover { background: var(--surface-alt); border-color: var(--border); }
   .related-short { font-size: 0.8rem; font-weight: 800; color: var(--accent); min-width: 52px; }
   .related-full { font-size: 0.85rem; color: var(--text); }
+
+  /* ── Report button + modal ── */
+  .panel-footer-row { padding-top: 0.5rem; margin-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+  .report-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: transparent; color: var(--text-dim); border: 1px solid transparent;
+    padding: 0.45rem 0.7rem; border-radius: 8px; font-size: 0.78rem; font-weight: 500;
+    cursor: pointer; transition: color 0.15s, background 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  .report-btn:hover { color: #ef4444; background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25); }
+
+  .report-modal-wrap { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
+  .report-modal-wrap.open { opacity: 1; pointer-events: auto; }
+  .report-modal-backdrop { position: absolute; inset: 0; background: var(--overlay); }
+  .report-modal {
+    position: relative; background: var(--bg-elevated); border: 1.5px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    width: 100%; max-width: 460px; padding: 1.25rem 1.25rem 1rem;
+    transform: translateY(8px); transition: transform 0.22s ease;
+  }
+  .report-modal-wrap.open .report-modal { transform: translateY(0); }
+  .report-modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .report-modal-head h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .report-close { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: transparent; color: var(--text-muted); border: 1px solid var(--border); cursor: pointer; }
+  .report-close:hover { color: var(--text); background: var(--surface-alt); }
+  .report-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.85rem; }
+  .report-form .form-label { margin-top: 0.5rem; display: block; }
+  .report-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1rem; }
+  .report-msg { font-size: 0.85rem; margin-top: 0.65rem; min-height: 1em; }
+  .report-msg.ok    { color: #15803d; }
+  .report-msg.error { color: #b91c1c; }
 
 </style>

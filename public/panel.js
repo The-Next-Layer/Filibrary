@@ -160,6 +160,14 @@
         + '</section>';
     }
 
+    var reportBlock =
+      '<section class="panel-footer-row">'
+        + '<button class="report-btn" id="report-btn" type="button" data-slug="' + esc(f.slug) + '">'
+          + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'
+          + 'Report an issue'
+        + '</button>'
+      + '</section>';
+
     inner.innerHTML =
       '<div class="panel-top">'
         + '<button class="panel-close" id="panel-close" aria-label="Close panel" type="button">'
@@ -177,7 +185,8 @@
       + statsBlock
       + buyBlock
       + videosBlock
-      + relatedBlock;
+      + relatedBlock
+      + reportBlock;
 
     var closeBtn = document.getElementById('panel-close');
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
