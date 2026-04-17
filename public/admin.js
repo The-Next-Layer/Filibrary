@@ -6,8 +6,8 @@
   var PW_KEY = 'filibrary_admin_pw';
 
   var TAG_OPTIONS = [
-    'Abrasive','Aesthetic','Beginner Friendly','Chemical Resistant','Composite',
-    'Core Material','Durable','Eco / Bio-Based','Electronics','Flexible',
+    'Abrasive','Aesthetic','Beginner Friendly','Challenging','Chemical Resistant','Composite',
+    'Core Material','Durable','Eco / Bio-Based','Electronics','Engineering','Exotic','Flexible',
     'High Heat','Hygroscopic','Lightweight','Outdoor','Print Enclosed',
     'Specialty','Support',
   ];
