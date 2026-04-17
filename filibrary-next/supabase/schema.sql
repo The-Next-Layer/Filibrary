@@ -75,6 +75,8 @@ create table if not exists public.community_submissions (
   source_links jsonb,
   tags jsonb,
   purchase_link text,
+  stats jsonb,
+  stats_source text,
   status text not null default 'pending' check (status in ('pending','approved','rejected')),
   reviewed_notes text,
   created_at timestamptz not null default now()

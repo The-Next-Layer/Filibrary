@@ -96,6 +96,44 @@ const ALL_TAGS = [
           <input type="text" id="video_title" name="video_title" class="form-input" style="margin-top:0.4rem" placeholder="Video title (optional)" maxlength="120" />
         </div>
 
+        <div class="form-group">
+          <label class="form-label">Performance Ratings</label>
+          <span class="form-hint">Rate each property from 0–100 based on your experience or the manufacturer's data sheet. Leave everything at 50 if you're not sure.</span>
+          <div class="stats-grid">
+            <div class="stat-slider">
+              <label for="stat-strength"><span>Strength</span><output id="out-strength">50</output></label>
+              <input type="range" id="stat-strength" name="stat_strength" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>weak</small><small>strong</small></span>
+            </div>
+            <div class="stat-slider">
+              <label for="stat-heat"><span>Heat</span><output id="out-heat">50</output></label>
+              <input type="range" id="stat-heat" name="stat_heat" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>low HDT</small><small>high HDT</small></span>
+            </div>
+            <div class="stat-slider">
+              <label for="stat-printability"><span>Printability</span><output id="out-printability">50</output></label>
+              <input type="range" id="stat-printability" name="stat_printability" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>finicky</small><small>easy</small></span>
+            </div>
+            <div class="stat-slider">
+              <label for="stat-weather"><span>Weather</span><output id="out-weather">50</output></label>
+              <input type="range" id="stat-weather" name="stat_weather" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>indoor</small><small>outdoor</small></span>
+            </div>
+            <div class="stat-slider">
+              <label for="stat-flex"><span>Flex</span><output id="out-flex">50</output></label>
+              <input type="range" id="stat-flex" name="stat_flex" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>rigid</small><small>flexible</small></span>
+            </div>
+            <div class="stat-slider">
+              <label for="stat-finish"><span>Finish</span><output id="out-finish">50</output></label>
+              <input type="range" id="stat-finish" name="stat_finish" min="0" max="100" value="50" />
+              <span class="stat-scale"><small>rough</small><small>smooth</small></span>
+            </div>
+          </div>
+          <input type="text" id="stats_source" name="stats_source" class="form-input" style="margin-top:0.85rem" placeholder="Source of these numbers (optional — e.g. 'Polymaker TDS', 'my own testing')" maxlength="160" />
+        </div>
+
         <div class="form-submit-row">
           <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
             <span id="submit-text">Submit for Review</span>
@@ -133,6 +171,14 @@ const ALL_TAGS = [
     display: flex; gap: 1rem; align-items: flex-start;
     padding: 1.25rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 1.5px solid;
   }
+  /* Stat sliders */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.85rem 1.25rem; margin-top: 0.5rem; }
+  .stat-slider { display: flex; flex-direction: column; gap: 0.35rem; }
+  .stat-slider > label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .stat-slider output { font-family: var(--font); font-size: 0.85rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat-slider input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .stat-scale { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); }
+
   .success-box { background: #f0fdf4; border-color: #bbf7d0; }
   .success-icon { font-size: 1.5rem; }
   .success-title { font-weight: 700; color: #15803d; margin-bottom: 0.25rem; }
@@ -161,6 +207,16 @@ const ALL_TAGS = [
   const successMsg = document.getElementById('success-msg')!;
   const errorMsg = document.getElementById('error-msg')!;
   const errorText = document.getElementById('error-text')!;
+
+  // Live-update slider output labels
+  const statKeys = ['strength', 'heat', 'printability', 'weather', 'flex', 'finish'];
+  statKeys.forEach((k) => {
+    const input = document.getElementById(`stat-${k}`) as HTMLInputElement | null;
+    const out = document.getElementById(`out-${k}`) as HTMLOutputElement | null;
+    if (input && out) {
+      input.addEventListener('input', () => { out.value = input.value; });
+    }
+  });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -194,6 +250,22 @@ const ALL_TAGS = [
       ? [{ title: videoTitle || videoUrl, url: videoUrl }]
       : [];
 
+    // Stat values (sliders)
+    function readStat(id: string): number {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      const n = el ? parseInt(el.value, 10) : 50;
+      return isNaN(n) ? 50 : Math.max(0, Math.min(100, n));
+    }
+    const stats = [
+      { label: 'Strength',     value: readStat('stat-strength') },
+      { label: 'Heat',         value: readStat('stat-heat') },
+      { label: 'Printability', value: readStat('stat-printability') },
+      { label: 'Weather',      value: readStat('stat-weather') },
+      { label: 'Flex',         value: readStat('stat-flex') },
+      { label: 'Finish',       value: readStat('stat-finish') },
+    ];
+    const statsSource = (form.querySelector('#stats_source') as HTMLInputElement).value.trim();
+
     // Loading state
     submitBtn.disabled = true;
     submitText.textContent = 'Submitting…';
@@ -214,12 +286,14 @@ const ALL_TAGS = [
           'Prefer': 'return=minimal',
         },
         body: JSON.stringify({
-          short_name:   shortName,
-          full_name:    fullName,
-          summary:      summary,
-          tags:         checkedTags,
+          short_name:    shortName,
+          full_name:     fullName,
+          summary:       summary,
+          tags:          checkedTags,
           purchase_link: purchaseLink || null,
           source_links:  sourceLinks,
+          stats:         stats,
+          stats_source:  statsSource || null,
         }),
       });
 
