@@ -119,12 +119,12 @@ function insertIntoSeed(src: string, e: FilamentEntry): string {
     throw new Error(`Slug already exists in seed.ts: ${e.slug}`);
   }
   const block = entryJson(e);
-  // Match "...},\n];" or "...}\n];" at end.
-  const re = /(\}\s*)\n?\]\s*;\s*$/;
+  // Match "...}\n] (as const)? ;" at end — preserve whatever trails the `]`.
+  const re = /(\}\s*)\n?(\]\s*(?:as\s+const\s*)?;)\s*$/;
   if (!re.test(src.trimEnd())) {
     throw new Error('seed.ts format unexpected — could not find closing "];"');
   }
-  return src.trimEnd().replace(re, `$1,\n${block}\n];\n`);
+  return src.trimEnd().replace(re, `$1,\n${block}\n$2\n`);
 }
 
 // ── Editing existing filaments ───────────────────────────────────────────
