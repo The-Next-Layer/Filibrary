@@ -2,24 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 import { filaments } from '../data/filaments';
 
-// Gather all unique tags
 const allTags = [...new Set(filaments.flatMap((f) => f.tags))].sort();
 
 function tagClass(tag: string) {
   return 'tag tag-' + tag.replace(/\s+/g, '-').replace(/\//g, '-');
 }
+
+// Compact payload for the panel (client reads from a JSON script tag).
+const panelData = filaments.map((f) => ({
+  slug: f.slug,
+  shortName: f.shortName,
+  fullName: f.fullName,
+  summary: f.summary,
+  tags: f.tags,
+  stats: f.stats ?? [],
+  statsSource: f.statsSource ?? '',
+  purchaseLinks: f.purchaseLinks ?? [],
+  videoReferences: f.videoReferences ?? [],
+}));
 ---
 
 <Layout title="Filibrary">
 
   <!-- Hero -->
   <section class="hero">
-    <div class="container">
-      <h1>The 3D Printer<br/><span class="hero-accent">Filament Library</span></h1>
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <p class="hero-eyebrow">The 3D Printer Filament Library</p>
+      <h1>Every material,<br/><span class="hero-accent">explained.</span></h1>
       <p class="hero-sub">
-        {filaments.length} materials explained — what they're good for, how hard they are to print, and where to buy them.
+        {filaments.length} materials — what they're good for, how hard they are to print, and where to buy them.
       </p>
       <div class="hero-search-wrap">
+        <svg class="hero-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <input
           id="search"
           type="search"
@@ -34,7 +49,7 @@ function tagClass(tag: string) {
   <!-- Tag Filter -->
   <section class="filter-section">
     <div class="container">
-      <div class="filter-bar">
+      <div class="filter-bar" id="filter-bar">
         <button class="filter-tag active" data-tag="all">All</button>
         {allTags.map((tag) => (
           <button class={`filter-tag ${tagClass(tag)}`} data-tag={tag}>{tag}</button>
@@ -49,74 +64,98 @@ function tagClass(tag: string) {
       <p class="results-count" id="results-count">{filaments.length} materials</p>
       <div class="filament-grid" id="filament-grid">
         {filaments.map((f) => (
-          <a
-            href={`/filaments/${f.slug}`}
+          <button
+            type="button"
             class="filament-card"
+            data-slug={f.slug}
             data-tags={JSON.stringify(f.tags)}
             data-search={`${f.shortName} ${f.fullName} ${f.summary} ${f.tags.join(' ')}`.toLowerCase()}
           >
             <div class="card-header">
               <span class="card-short">{f.shortName}</span>
-              {f.tags.slice(0, 2).map((tag) => (
-                <span class={tagClass(tag)}>{tag}</span>
-              ))}
-            </div>
-            <h3 class="card-full">{f.fullName}</h3>
-            <p class="card-summary">{f.summary.slice(0, 110)}{f.summary.length > 110 ? '…' : ''}</p>
-
-            {f.stats && f.stats.length > 0 ? (
-              <div class="card-stats">
-                {f.stats.slice(0, 3).map((s) => (
-                  <div class="mini-stat">
-                    <div class="mini-stat-label">{s.label}</div>
-                    <div class="mini-stat-track">
-                      <div
-                        class={`mini-stat-fill stat-${s.label}`}
-                        style={`width:${s.value}%`}
-                      ></div>
-                    </div>
-                  </div>
+              <div class="card-tags">
+                {f.tags.slice(0, 2).map((tag) => (
+                  <span class={tagClass(tag)}>{tag}</span>
                 ))}
               </div>
-            ) : null}
-
+            </div>
+            <h3 class="card-full">{f.fullName}</h3>
+            <p class="card-summary">{f.summary.slice(0, 120)}{f.summary.length > 120 ? '…' : ''}</p>
             <div class="card-footer">
               {f.purchaseLinks.length > 0
-                ? <span class="card-buy-count">🛒 {f.purchaseLinks.length} {f.purchaseLinks.length === 1 ? 'vendor' : 'vendors'}</span>
+                ? <span class="card-buy-count">{f.purchaseLinks.length} {f.purchaseLinks.length === 1 ? 'vendor' : 'vendors'}</span>
                 : <span class="card-no-buy">No links yet</span>
               }
-              <span class="card-arrow">View →</span>
+              <span class="card-arrow">Details →</span>
             </div>
-          </a>
+          </button>
         ))}
       </div>
       <p class="no-results hidden" id="no-results">No filaments match — <button class="link-btn" id="clear-btn">clear filters</button></p>
     </div>
   </section>
 
+  <!-- Slide-out detail panel -->
+  <div class="panel-backdrop" id="panel-backdrop" aria-hidden="true"></div>
+  <aside class="detail-panel" id="detail-panel" role="dialog" aria-modal="true" aria-label="Filament details" aria-hidden="true">
+    <div class="panel-inner" id="panel-inner">
+      <!-- Rendered by JS -->
+    </div>
+  </aside>
+
+  <script id="filament-data" type="application/json" set:html={JSON.stringify(panelData)}></script>
+
 </Layout>
 
 <style>
   /* Hero */
-  .hero { background: var(--header-bg); color: #fff; padding: 3.5rem 0 2.5rem; }
-  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; line-height: 1.1; margin-bottom: 1rem; }
-  .hero-accent { color: var(--accent); }
-  .hero-sub { font-size: 1.05rem; color: #94a3b8; max-width: 520px; line-height: 1.6; margin-bottom: 1.5rem; }
-  .hero-search-wrap { max-width: 520px; }
-  .hero-search {
-    width: 100%; padding: 0.75rem 1.1rem; border-radius: 10px;
-    border: 2px solid #1e293b; background: #1e293b; color: #fff;
-    font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.15s;
+  .hero { position: relative; padding: 4rem 0 3rem; overflow: hidden; color: #fff; }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: var(--hero-bg);
   }
-  .hero-search::placeholder { color: #475569; }
-  .hero-search:focus { border-color: var(--accent); }
+  .hero-bg::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(600px 320px at 15% 20%, rgba(249,115,22,0.22), transparent 60%),
+      radial-gradient(500px 280px at 85% 80%, rgba(99,102,241,0.25), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.6); margin-bottom: 1rem;
+  }
+  .hero h1 { font-size: clamp(2.2rem, 5.5vw, 3.4rem); font-weight: 800; line-height: 1.05; margin-bottom: 1rem; letter-spacing: -0.02em; }
+  .hero-accent {
+    background: linear-gradient(90deg, #fdba74, #f97316 60%, #ec4899);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { font-size: 1.05rem; color: rgba(255,255,255,0.72); max-width: 540px; line-height: 1.65; margin-bottom: 1.75rem; }
+  .hero-search-wrap { position: relative; max-width: 560px; }
+  .hero-search-icon { position: absolute; top: 50%; left: 1rem; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
+  .hero-search {
+    width: 100%; padding: 0.9rem 1.1rem 0.9rem 2.75rem; border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #fff;
+    font-size: 0.95rem; font-family: var(--font); outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .hero-search::placeholder { color: rgba(255,255,255,0.45); }
+  .hero-search:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
 
   /* Filter */
-  .filter-section { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.875rem 0; position: sticky; top: 53px; z-index: 50; }
-  .filter-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+  .filter-section {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 0;
+    position: sticky; top: 57px; z-index: 50;
+  }
+  .filter-bar { display: flex; gap: 0.4rem; overflow-x: auto; align-items: center; scrollbar-width: none; }
+  .filter-bar::-webkit-scrollbar { display: none; }
   .filter-tag {
-    padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
-    border: 1.5px solid var(--border); background: var(--bg); color: var(--text-muted);
+    padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+    border: 1.5px solid var(--border); background: transparent; color: var(--text-muted);
     cursor: pointer; transition: all 0.15s; white-space: nowrap;
   }
   .filter-tag:hover { border-color: var(--accent); color: var(--accent); }
@@ -128,89 +167,60 @@ function tagClass(tag: string) {
   .filament-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   /* Card */
   .filament-card {
     background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
     padding: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-    text-decoration: none; color: inherit;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, background 0.15s;
+    text-align: left; color: inherit; cursor: pointer; font-family: inherit;
+    min-height: 170px;
   }
-  .filament-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+  .filament-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--border-strong); background: var(--card-hover); }
+  .filament-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .card-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .card-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
   .card-short {
-    font-size: 0.95rem; font-weight: 800; color: var(--accent);
-    background: #fff7ed; border: 1.5px solid #fed7aa;
-    padding: 0.15rem 0.6rem; border-radius: 6px;
+    font-size: 0.88rem; font-weight: 800; color: var(--accent);
+    background: var(--accent-soft); border: 1.5px solid rgba(249,115,22,0.25);
+    padding: 0.18rem 0.6rem; border-radius: 6px; letter-spacing: 0.01em;
   }
   .card-full { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
   .card-summary { font-size: 0.83rem; color: var(--text-muted); line-height: 1.55; flex: 1; }
-
-  /* Mini stats on card */
-  .card-stats { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.25rem; }
-  .mini-stat { display: grid; grid-template-columns: 72px 1fr; gap: 0.5rem; align-items: center; }
-  .mini-stat-label { font-size: 0.72rem; color: var(--text-muted); }
-  .mini-stat-track { background: var(--border); border-radius: 99px; height: 5px; overflow: hidden; }
-  .mini-stat-fill { height: 100%; border-radius: 99px; }
-
-  /* Card footer */
   .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--border); margin-top: auto; }
-  .card-buy-count { font-size: 0.78rem; color: var(--text-muted); }
-  .card-no-buy { font-size: 0.78rem; color: #cbd5e1; }
-  .card-arrow { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+  .card-buy-count { font-size: 0.76rem; color: var(--text-muted); font-weight: 500; }
+  .card-no-buy { font-size: 0.76rem; color: var(--text-dim); }
+  .card-arrow { font-size: 0.82rem; font-weight: 700; color: var(--accent); }
 
-  /* No results */
   .no-results { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.95rem; }
   .no-results.hidden { display: none; }
-  .link-btn { background: none; border: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: inherit; }
+  .link-btn { background: none; border: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: inherit; font-family: inherit; }
+
+  /* ── Slide-out panel ── */
+  .panel-backdrop {
+    position: fixed; inset: 0; background: var(--overlay); z-index: 200;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .panel-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .detail-panel {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(560px, 100vw);
+    background: var(--bg-elevated);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    z-index: 201;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .detail-panel.open { transform: translateX(0); }
+  @media (max-width: 640px) { .detail-panel { width: 100vw; } }
+
+  .panel-inner { padding: 1.25rem 1.5rem 2.5rem; }
 </style>
 
-<script>
-  const searchInput  = document.getElementById('search') as HTMLInputElement;
-  const filterTags   = document.querySelectorAll<HTMLButtonElement>('.filter-tag');
-  const cards        = document.querySelectorAll<HTMLElement>('.filament-card');
-  const countEl      = document.getElementById('results-count');
-  const noResults    = document.getElementById('no-results');
-  const clearBtn     = document.getElementById('clear-btn');
-
-  let activeTag = 'all';
-  let searchQuery = '';
-
-  function applyFilters() {
-    let visible = 0;
-    cards.forEach(card => {
-      const tags: string[] = JSON.parse(card.dataset.tags || '[]');
-      const search = card.dataset.search || '';
-      const tagMatch = activeTag === 'all' || tags.includes(activeTag);
-      const searchMatch = !searchQuery || search.includes(searchQuery.toLowerCase());
-      const show = tagMatch && searchMatch;
-      (card as HTMLElement).style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    if (countEl) countEl.textContent = `${visible} material${visible !== 1 ? 's' : ''}`;
-    if (noResults) noResults.classList.toggle('hidden', visible > 0);
-  }
-
-  filterTags.forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeTag = btn.dataset.tag || 'all';
-      filterTags.forEach(b => b.classList.toggle('active', b.dataset.tag === activeTag));
-      applyFilters();
-    });
-  });
-
-  searchInput?.addEventListener('input', () => {
-    searchQuery = searchInput.value.trim();
-    applyFilters();
-  });
-
-  clearBtn?.addEventListener('click', () => {
-    activeTag = 'all';
-    searchQuery = '';
-    if (searchInput) searchInput.value = '';
-    filterTags.forEach(b => b.classList.toggle('active', b.dataset.tag === 'all'));
-    applyFilters();
-  });
-</script>
+<script is:inline src="/panel.js"></script>

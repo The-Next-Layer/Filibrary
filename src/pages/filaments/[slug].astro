@@ -12,19 +12,64 @@ function tagClass(tag: string) {
   return 'tag tag-' + tag.replace(/\s+/g, '-').replace(/\//g, '-');
 }
 
-const statColors: Record<string, string> = {
-  Strength: '#3b82f6',
-  Heat: '#ef4444',
-  Printability: '#22c55e',
-  Weather: '#14b8a6',
-  Flex: '#a855f7',
-  Finish: '#f59e0b',
-};
+// Build radar SVG server-side
+function buildRadar(stats: { label: string; value: number }[]) {
+  if (!stats || stats.length === 0) return '';
+  const size = 340, cx = size / 2, cy = size / 2, r = 110;
+  const n = stats.length;
+  const angleFor = (i: number) => (Math.PI * 2 * i / n) - Math.PI / 2;
 
-// Find related filaments by shared tags
+  let rings = '';
+  [0.25, 0.5, 0.75, 1].forEach((factor) => {
+    const pts: string[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = angleFor(i);
+      pts.push(`${(cx + r * factor * Math.cos(a)).toFixed(1)},${(cy + r * factor * Math.sin(a)).toFixed(1)}`);
+    }
+    const cls = factor === 1 ? 'radar-ring radar-ring-outer' : 'radar-ring';
+    rings += `<polygon points="${pts.join(' ')}" class="${cls}" />`;
+  });
+
+  let axes = '';
+  for (let i = 0; i < n; i++) {
+    const a = angleFor(i);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${(cx + r * Math.cos(a)).toFixed(1)}" y2="${(cy + r * Math.sin(a)).toFixed(1)}" class="radar-axis" />`;
+  }
+
+  const dataPts: string[] = [];
+  let dots = '';
+  for (let i = 0; i < n; i++) {
+    const a = angleFor(i);
+    const val = Math.max(0, Math.min(100, stats[i].value || 0));
+    const rr = r * (val / 100);
+    const px = cx + rr * Math.cos(a);
+    const py = cy + rr * Math.sin(a);
+    dataPts.push(`${px.toFixed(1)},${py.toFixed(1)}`);
+    dots += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.5" class="radar-dot" />`;
+  }
+
+  let labels = '';
+  for (let i = 0; i < n; i++) {
+    const a = angleFor(i);
+    const lx = cx + (r + 26) * Math.cos(a);
+    const ly = cy + (r + 26) * Math.sin(a);
+    let anchor = 'middle';
+    if (Math.cos(a) > 0.35) anchor = 'start';
+    else if (Math.cos(a) < -0.35) anchor = 'end';
+    labels += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="radar-label" text-anchor="${anchor}" dominant-baseline="middle">${stats[i].label}</text>`;
+    labels += `<text x="${lx.toFixed(1)}" y="${(ly + 14).toFixed(1)}" class="radar-value" text-anchor="${anchor}" dominant-baseline="middle">${stats[i].value}</text>`;
+  }
+
+  return `<div class="radar-wrap"><svg viewBox="0 0 ${size} ${size}" class="radar" role="img" aria-label="Filament performance radar">${rings}${axes}<polygon points="${dataPts.join(' ')}" class="radar-data" />${dots}${labels}</svg></div>`;
+}
+
+const radarHtml = buildRadar(f.stats || []);
+
 const related = filaments
-  .filter(r => r.slug !== f.slug && r.tags.some(t => f.tags.includes(t)))
+  .filter((r) => r.slug !== f.slug && r.tags.some((t) => f.tags.includes(t)))
   .slice(0, 4);
+
+const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenextlayer.com&no_recurring=0&item_name=Support+Filibrary+%E2%80%94+the+3D+printer+filament+library&currency_code=USD';
 ---
 
 <Layout title={`${f.shortName} — ${f.fullName}`} description={f.summary}>
@@ -38,48 +83,31 @@ const related = filaments
   <div class="detail-page">
     <div class="container">
 
-      <!-- Header -->
       <header class="detail-header">
         <div class="detail-title-row">
           <span class="detail-short">{f.shortName}</span>
           <div class="detail-tags">
-            {f.tags.map(tag => <span class={tagClass(tag)}>{tag}</span>)}
+            {f.tags.map((tag) => <span class={tagClass(tag)}>{tag}</span>)}
           </div>
         </div>
         <h1 class="detail-full">{f.fullName}</h1>
         <p class="detail-summary">{f.summary}</p>
       </header>
 
-      <!-- Two-column layout -->
       <div class="detail-grid">
-
-        <!-- Left: Stats + Videos -->
         <div class="detail-main">
 
           {f.stats && f.stats.length > 0 ? (
             <section class="detail-section">
-              <h2>Performance Ratings</h2>
-              <div class="stat-bar-wrap">
-                {f.stats.map(s => (
-                  <div class="stat-row">
-                    <span class="stat-label">{s.label}</span>
-                    <div class="stat-track">
-                      <div
-                        class={`stat-fill stat-${s.label}`}
-                        style={`width:${s.value}%`}
-                      ></div>
-                    </div>
-                    <span class="stat-value">{s.value}</span>
-                  </div>
-                ))}
-              </div>
+              <h2>Performance</h2>
+              <div set:html={radarHtml} />
               {f.statsSource && (
                 <p class="stat-source">Source: {f.statsSource}</p>
               )}
             </section>
           ) : (
             <section class="detail-section stats-empty">
-              <h2>Performance Ratings</h2>
+              <h2>Performance</h2>
               <p>Detailed stats for this material are not yet available. <a href="/submit">Have data? Submit it.</a></p>
             </section>
           )}
@@ -88,7 +116,7 @@ const related = filaments
             <section class="detail-section">
               <h2>Referenced In</h2>
               <div class="video-grid">
-                {f.videoReferences.map(v => (
+                {f.videoReferences.map((v) => (
                   <a href={v.url} target="_blank" rel="noopener noreferrer" class="video-card">
                     <div class="video-thumb">
                       <img src={v.thumbnailUrl} alt={v.title} loading="lazy" />
@@ -103,14 +131,13 @@ const related = filaments
 
         </div>
 
-        <!-- Right: Buy links + Support -->
         <aside class="detail-aside">
 
           <div class="aside-card buy-card">
             <h2>Where to Buy</h2>
             {f.purchaseLinks && f.purchaseLinks.length > 0 ? (
               <div class="buy-list">
-                {f.purchaseLinks.map(link => (
+                {f.purchaseLinks.map((link) => (
                   <a href={link.url} target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">
                     <span>{link.label}</span>
                     <span class="btn-buy-arrow">→</span>
@@ -120,24 +147,23 @@ const related = filaments
             ) : (
               <p class="no-links">No purchase links yet. <a href="/submit">Know a good source? Submit it.</a></p>
             )}
-            <p class="affiliate-note">🔗 Affiliate links — costs you nothing, helps keep this library free.</p>
           </div>
 
           <div class="aside-card support-card">
             <p class="support-heading">Find Filibrary useful?</p>
-            <p class="support-text">This library is free. A coffee keeps it running.</p>
-            <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" rel="noopener noreferrer" class="btn-kofi">
-              ☕ Buy me a coffee
+            <p class="support-text">This library is free. A small donation keeps it running.</p>
+            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" class="btn-paypal">
+              Donate via PayPal
             </a>
           </div>
 
           {related.length > 0 && (
             <div class="aside-card related-card">
               <h3>Related Materials</h3>
-              <ul class="related-list">
-                {related.map(r => (
+              <ul class="related-inline-list">
+                {related.map((r) => (
                   <li>
-                    <a href={`/filaments/${r.slug}`} class="related-link">
+                    <a href={`/filaments/${r.slug}`} class="related-inline-link">
                       <span class="related-short">{r.shortName}</span>
                       <span class="related-full">{r.fullName}</span>
                     </a>
@@ -156,68 +182,43 @@ const related = filaments
 </Layout>
 
 <style>
-  .crumb-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.65rem 0; }
+  .crumb-bar { background: var(--bg-elevated); border-bottom: 1px solid var(--border); padding: 0.7rem 0; }
   .crumb-bar a { font-size: 0.85rem; color: var(--text-muted); transition: color 0.15s; }
   .crumb-bar a:hover { color: var(--accent); }
 
   .detail-page { padding: 2.5rem 0 4rem; }
 
-  /* Header */
   .detail-header { margin-bottom: 2.5rem; }
-  .detail-title-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .detail-title-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
   .detail-short {
     font-size: 1.1rem; font-weight: 900; color: var(--accent);
-    background: #fff7ed; border: 2px solid #fed7aa; padding: 0.2rem 0.75rem; border-radius: 8px;
+    background: var(--accent-soft); border: 1.5px solid rgba(249,115,22,0.28);
+    padding: 0.2rem 0.75rem; border-radius: 8px;
   }
   .detail-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .detail-full { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; line-height: 1.2; color: var(--text); margin-bottom: 1rem; }
+  .detail-full { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); margin-bottom: 1rem; }
   .detail-summary { font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; max-width: 680px; }
 
-  /* Layout grid */
-  .detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.75rem; align-items: start; }
   @media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } .detail-aside { order: -1; } }
 
-  /* Sections */
-  .detail-section { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
-  .detail-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; color: var(--text); }
-  .stat-source { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; }
-  .stats-empty p { font-size: 0.875rem; color: var(--text-muted); }
-  .stats-empty a { color: var(--accent); font-weight: 600; }
+  .detail-section { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
+  .detail-section h2 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.1rem; }
 
-  /* Videos */
-  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-  .video-card { text-decoration: none; color: inherit; }
-  .video-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; background: #0f172a; }
-  .video-thumb img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.15s; }
-  .video-card:hover .video-thumb img { opacity: 0.8; }
-  .video-play {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; color: rgba(255,255,255,0.9); pointer-events: none;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  }
-  .video-title { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4; }
-
-  /* Aside */
-  .detail-aside { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 110px; }
+  .detail-aside { display: flex; flex-direction: column; gap: 1rem; position: sticky; top: 110px; }
   .aside-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
-  .aside-card h2, .aside-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+  .aside-card h2, .aside-card h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1rem; }
 
-  /* Buy list */
-  .buy-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
-  .no-links { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.75rem; }
-  .no-links a { color: var(--accent); font-weight: 600; }
-  .affiliate-note { font-size: 0.72rem; color: #94a3b8; line-height: 1.5; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+  .support-card { background: var(--accent-soft); border-color: rgba(249,115,22,0.28); }
+  .support-heading { font-size: 0.95rem; font-weight: 700; color: var(--accent); margin-bottom: 0.4rem; text-transform: none; letter-spacing: 0; }
+  .support-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.9rem; }
+  .support-card .btn-paypal { align-self: flex-start; }
 
-  /* Support */
-  .support-card { background: #fff7ed; border-color: #fed7aa; }
-  .support-heading { font-size: 0.95rem; font-weight: 700; color: #c2410c; margin-bottom: 0.4rem; }
-  .support-text { font-size: 0.83rem; color: #92400e; margin-bottom: 0.9rem; }
-
-  /* Related */
-  .related-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
-  .related-link { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
-  .related-link:last-child { border-bottom: none; }
-  .related-link:hover .related-short { color: var(--accent); }
-  .related-short { font-size: 0.8rem; font-weight: 800; color: var(--accent); min-width: 50px; }
-  .related-full { font-size: 0.82rem; color: var(--text-muted); }
+  .related-inline-list { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
+  .related-inline-link {
+    display: flex; gap: 0.65rem; align-items: baseline; padding: 0.5rem 0.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .related-inline-list li:last-child .related-inline-link { border-bottom: none; }
+  .related-inline-link:hover .related-short { color: var(--accent-dark); }
 </style>

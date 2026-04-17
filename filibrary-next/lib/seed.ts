@@ -418,8 +418,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 55
+        },
+        {
+            "label": "Heat",
+            "value": 54
+        },
+        {
+            "label": "Printability",
+            "value": 50
+        },
+        {
+            "label": "Weather",
+            "value": 62
+        },
+        {
+            "label": "Flex",
+            "value": 94
+        },
+        {
+            "label": "Finish",
+            "value": 68
+        }
+    ],
+    "statsSource": "Arkema Pebax TDS / community testing"
   },
   {
     "slug": "pc-cf",
@@ -451,8 +476,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 90
+        },
+        {
+            "label": "Heat",
+            "value": 92
+        },
+        {
+            "label": "Printability",
+            "value": 42
+        },
+        {
+            "label": "Weather",
+            "value": 54
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 80
+        }
+    ],
+    "statsSource": "Polymaker / 3DXTech PC-CF TDS"
   },
   {
     "slug": "tpe",
@@ -481,8 +531,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 52
+        },
+        {
+            "label": "Heat",
+            "value": 44
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 58
+        },
+        {
+            "label": "Flex",
+            "value": 95
+        },
+        {
+            "label": "Finish",
+            "value": 64
+        }
+    ],
+    "statsSource": "NinjaTek Cheetah TDS / community data"
   },
   {
     "slug": "pvb",
@@ -512,8 +587,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 62
+        },
+        {
+            "label": "Heat",
+            "value": 32
+        },
+        {
+            "label": "Printability",
+            "value": 84
+        },
+        {
+            "label": "Weather",
+            "value": 28
+        },
+        {
+            "label": "Flex",
+            "value": 24
+        },
+        {
+            "label": "Finish",
+            "value": 94
+        }
+    ],
+    "statsSource": "Polymaker PolySmooth TDS"
   },
   {
     "slug": "pp",
@@ -550,8 +650,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 60
+        },
+        {
+            "label": "Heat",
+            "value": 60
+        },
+        {
+            "label": "Printability",
+            "value": 38
+        },
+        {
+            "label": "Weather",
+            "value": 78
+        },
+        {
+            "label": "Flex",
+            "value": 70
+        },
+        {
+            "label": "Finish",
+            "value": 58
+        }
+    ],
+    "statsSource": "Polymaker / BASF PP TDS"
   },
   {
     "slug": "cpe",
@@ -576,8 +701,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 72
+        },
+        {
+            "label": "Heat",
+            "value": 62
+        },
+        {
+            "label": "Printability",
+            "value": 74
+        },
+        {
+            "label": "Weather",
+            "value": 64
+        },
+        {
+            "label": "Flex",
+            "value": 38
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Fillamentum CPE HG100 TDS"
   },
   {
     "slug": "nonoilen",
@@ -601,8 +751,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 70
+        },
+        {
+            "label": "Heat",
+            "value": 68
+        },
+        {
+            "label": "Printability",
+            "value": 70
+        },
+        {
+            "label": "Weather",
+            "value": 40
+        },
+        {
+            "label": "Flex",
+            "value": 32
+        },
+        {
+            "label": "Finish",
+            "value": 76
+        }
+    ],
+    "statsSource": "Fillamentum NonOilen TDS"
   },
   {
     "slug": "pa6",
@@ -639,8 +814,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 88
+        },
+        {
+            "label": "Heat",
+            "value": 82
+        },
+        {
+            "label": "Printability",
+            "value": 40
+        },
+        {
+            "label": "Weather",
+            "value": 50
+        },
+        {
+            "label": "Flex",
+            "value": 56
+        },
+        {
+            "label": "Finish",
+            "value": 64
+        }
+    ],
+    "statsSource": "Polymaker CoPA / BASF PA6 TDS"
   },
   {
     "slug": "pa12",
@@ -677,8 +877,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 80
+        },
+        {
+            "label": "Heat",
+            "value": 78
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 68
+        },
+        {
+            "label": "Flex",
+            "value": 50
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Polymaker CoPA / 3DXTech PA12 TDS"
   },
   {
     "slug": "pc",
@@ -787,8 +1012,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 78
+        },
+        {
+            "label": "Heat",
+            "value": 34
+        },
+        {
+            "label": "Printability",
+            "value": 78
+        },
+        {
+            "label": "Weather",
+            "value": 24
+        },
+        {
+            "label": "Flex",
+            "value": 12
+        },
+        {
+            "label": "Finish",
+            "value": 86
+        }
+    ],
+    "statsSource": "Polymaker / Prusament PLA-CF TDS"
   },
   {
     "slug": "petg-cf",
@@ -831,8 +1081,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 80
+        },
+        {
+            "label": "Heat",
+            "value": 58
+        },
+        {
+            "label": "Printability",
+            "value": 72
+        },
+        {
+            "label": "Weather",
+            "value": 58
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 80
+        }
+    ],
+    "statsSource": "3DXTech / Polymaker PETG-CF TDS"
   },
   {
     "slug": "pet-cf",
@@ -871,8 +1146,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 90
+        },
+        {
+            "label": "Heat",
+            "value": 80
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 60
+        },
+        {
+            "label": "Flex",
+            "value": 16
+        },
+        {
+            "label": "Finish",
+            "value": 82
+        }
+    ],
+    "statsSource": "Bambu / 3DXTech PET-CF TDS"
   },
   {
     "slug": "pa-cf",
@@ -975,8 +1275,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 94
+        },
+        {
+            "label": "Heat",
+            "value": 92
+        },
+        {
+            "label": "Printability",
+            "value": 44
+        },
+        {
+            "label": "Weather",
+            "value": 58
+        },
+        {
+            "label": "Flex",
+            "value": 14
+        },
+        {
+            "label": "Finish",
+            "value": 86
+        }
+    ],
+    "statsSource": "Prusament PAHT-CF TDS"
   },
   {
     "slug": "abs-cf",
@@ -1008,8 +1333,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 74
+        },
+        {
+            "label": "Heat",
+            "value": 78
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 34
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 78
+        }
+    ],
+    "statsSource": "Polymaker / 3DXTech ABS-CF TDS"
   },
   {
     "slug": "abs-gf",
@@ -1045,8 +1395,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 70
+        },
+        {
+            "label": "Heat",
+            "value": 80
+        },
+        {
+            "label": "Printability",
+            "value": 54
+        },
+        {
+            "label": "Weather",
+            "value": 34
+        },
+        {
+            "label": "Flex",
+            "value": 24
+        },
+        {
+            "label": "Finish",
+            "value": 74
+        }
+    ],
+    "statsSource": "Polymaker / 3DXTech ABS-GF TDS"
   },
   {
     "slug": "hips",
@@ -1078,8 +1453,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 54
+        },
+        {
+            "label": "Heat",
+            "value": 62
+        },
+        {
+            "label": "Printability",
+            "value": 62
+        },
+        {
+            "label": "Weather",
+            "value": 28
+        },
+        {
+            "label": "Flex",
+            "value": 40
+        },
+        {
+            "label": "Finish",
+            "value": 66
+        }
+    ],
+    "statsSource": "Industry HIPS TDS"
   },
   {
     "slug": "pctg",
@@ -1115,8 +1515,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 76
+        },
+        {
+            "label": "Heat",
+            "value": 60
+        },
+        {
+            "label": "Printability",
+            "value": 80
+        },
+        {
+            "label": "Weather",
+            "value": 60
+        },
+        {
+            "label": "Flex",
+            "value": 46
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Prusament / Polymaker PCTG TDS"
   },
   {
     "slug": "peba-air",
@@ -1153,8 +1578,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 42
+        },
+        {
+            "label": "Heat",
+            "value": 50
+        },
+        {
+            "label": "Printability",
+            "value": 56
+        },
+        {
+            "label": "Weather",
+            "value": 58
+        },
+        {
+            "label": "Flex",
+            "value": 92
+        },
+        {
+            "label": "Finish",
+            "value": 64
+        }
+    ],
+    "statsSource": "Foaming PEBA — community testing"
   },
   {
     "slug": "tpu-air",
@@ -1186,8 +1636,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 40
+        },
+        {
+            "label": "Heat",
+            "value": 46
+        },
+        {
+            "label": "Printability",
+            "value": 54
+        },
+        {
+            "label": "Weather",
+            "value": 60
+        },
+        {
+            "label": "Flex",
+            "value": 90
+        },
+        {
+            "label": "Finish",
+            "value": 66
+        }
+    ],
+    "statsSource": "Foaming TPU — community testing"
   },
   {
     "slug": "roamr",
@@ -1223,8 +1698,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 52
+        },
+        {
+            "label": "Heat",
+            "value": 56
+        },
+        {
+            "label": "Printability",
+            "value": 58
+        },
+        {
+            "label": "Weather",
+            "value": 62
+        },
+        {
+            "label": "Flex",
+            "value": 94
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "ROAMR performance elastomer TDS"
   },
   {
     "slug": "morphlex",
@@ -1248,8 +1748,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 56
+        },
+        {
+            "label": "Heat",
+            "value": 52
+        },
+        {
+            "label": "Printability",
+            "value": 58
+        },
+        {
+            "label": "Weather",
+            "value": 62
+        },
+        {
+            "label": "Flex",
+            "value": 94
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Morphlex TDS"
   },
   {
     "slug": "fishy-pa6",
@@ -1274,8 +1799,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 82
+        },
+        {
+            "label": "Heat",
+            "value": 80
+        },
+        {
+            "label": "Printability",
+            "value": 42
+        },
+        {
+            "label": "Weather",
+            "value": 52
+        },
+        {
+            "label": "Flex",
+            "value": 52
+        },
+        {
+            "label": "Finish",
+            "value": 62
+        }
+    ],
+    "statsSource": "Fishy Filaments PA6 TDS"
   },
   {
     "slug": "orca",
@@ -1299,8 +1849,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 90
+        },
+        {
+            "label": "Heat",
+            "value": 84
+        },
+        {
+            "label": "Printability",
+            "value": 44
+        },
+        {
+            "label": "Weather",
+            "value": 56
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 78
+        }
+    ],
+    "statsSource": "Fishy Filaments OrCA TDS"
   },
   {
     "slug": "petg-ptfe",
@@ -1322,8 +1897,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 72
+        },
+        {
+            "label": "Heat",
+            "value": 58
+        },
+        {
+            "label": "Printability",
+            "value": 78
+        },
+        {
+            "label": "Weather",
+            "value": 60
+        },
+        {
+            "label": "Flex",
+            "value": 32
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "3DXTech PETG-PTFE TDS"
   },
   {
     "slug": "antibacterial-cpe",
@@ -1352,8 +1952,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 70
+        },
+        {
+            "label": "Heat",
+            "value": 60
+        },
+        {
+            "label": "Printability",
+            "value": 72
+        },
+        {
+            "label": "Weather",
+            "value": 62
+        },
+        {
+            "label": "Flex",
+            "value": 36
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Copper3D PLActive / CPE TDS"
   },
   {
     "slug": "petg-magnetite",
@@ -1379,8 +2004,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 66
+        },
+        {
+            "label": "Heat",
+            "value": 56
+        },
+        {
+            "label": "Printability",
+            "value": 70
+        },
+        {
+            "label": "Weather",
+            "value": 54
+        },
+        {
+            "label": "Flex",
+            "value": 26
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Community TDS (Magnetite-filled PETG)"
   },
   {
     "slug": "asa-cf",
@@ -1473,8 +2123,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 78
+        },
+        {
+            "label": "Heat",
+            "value": 80
+        },
+        {
+            "label": "Printability",
+            "value": 54
+        },
+        {
+            "label": "Weather",
+            "value": 92
+        },
+        {
+            "label": "Flex",
+            "value": 22
+        },
+        {
+            "label": "Finish",
+            "value": 82
+        }
+    ],
+    "statsSource": "Polymaker / 3DXTech ASA-GF TDS"
   },
   {
     "slug": "pla-ht",
@@ -1508,8 +2183,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 76
+        },
+        {
+            "label": "Heat",
+            "value": 64
+        },
+        {
+            "label": "Printability",
+            "value": 88
+        },
+        {
+            "label": "Weather",
+            "value": 30
+        },
+        {
+            "label": "Flex",
+            "value": 22
+        },
+        {
+            "label": "Finish",
+            "value": 82
+        }
+    ],
+    "statsSource": "Polymaker PLA Pro / High-Temp PLA TDS"
   },
   {
     "slug": "pla-ht-gf",
@@ -1540,8 +2240,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 82
+        },
+        {
+            "label": "Heat",
+            "value": 68
+        },
+        {
+            "label": "Printability",
+            "value": 74
+        },
+        {
+            "label": "Weather",
+            "value": 32
+        },
+        {
+            "label": "Flex",
+            "value": 16
+        },
+        {
+            "label": "Finish",
+            "value": 82
+        }
+    ],
+    "statsSource": "Polymaker PLA-HT GF TDS"
   },
   {
     "slug": "pps-tf",
@@ -1572,8 +2297,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 84
+        },
+        {
+            "label": "Heat",
+            "value": 96
+        },
+        {
+            "label": "Printability",
+            "value": 32
+        },
+        {
+            "label": "Weather",
+            "value": 72
+        },
+        {
+            "label": "Flex",
+            "value": 20
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Solvay / 3DXTech PPS-TF TDS"
   },
   {
     "slug": "ppa-cf",
@@ -1610,8 +2360,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 96
+        },
+        {
+            "label": "Heat",
+            "value": 94
+        },
+        {
+            "label": "Printability",
+            "value": 36
+        },
+        {
+            "label": "Weather",
+            "value": 60
+        },
+        {
+            "label": "Flex",
+            "value": 14
+        },
+        {
+            "label": "Finish",
+            "value": 86
+        }
+    ],
+    "statsSource": "Stratasys / 3DXTech PPA-CF TDS"
   },
   {
     "slug": "pps-cf",
@@ -1644,8 +2419,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 92
+        },
+        {
+            "label": "Heat",
+            "value": 96
+        },
+        {
+            "label": "Printability",
+            "value": 32
+        },
+        {
+            "label": "Weather",
+            "value": 72
+        },
+        {
+            "label": "Flex",
+            "value": 14
+        },
+        {
+            "label": "Finish",
+            "value": 82
+        }
+    ],
+    "statsSource": "Solvay / 3DXTech PPS-CF TDS"
   },
   {
     "slug": "pps-gf",
@@ -1678,8 +2478,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 84
+        },
+        {
+            "label": "Heat",
+            "value": 96
+        },
+        {
+            "label": "Printability",
+            "value": 34
+        },
+        {
+            "label": "Weather",
+            "value": 72
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 78
+        }
+    ],
+    "statsSource": "Solvay / 3DXTech PPS-GF TDS"
   },
   {
     "slug": "fibreheart-abs-ht-hf",
@@ -1709,8 +2534,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 68
+        },
+        {
+            "label": "Heat",
+            "value": 84
+        },
+        {
+            "label": "Printability",
+            "value": 64
+        },
+        {
+            "label": "Weather",
+            "value": 34
+        },
+        {
+            "label": "Flex",
+            "value": 42
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Fibreheart ABS HT HF TDS"
   },
   {
     "slug": "grip-tpu",
@@ -1735,8 +2585,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 60
+        },
+        {
+            "label": "Heat",
+            "value": 50
+        },
+        {
+            "label": "Printability",
+            "value": 58
+        },
+        {
+            "label": "Weather",
+            "value": 64
+        },
+        {
+            "label": "Flex",
+            "value": 96
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "GRIP TPU TDS"
   },
   {
     "slug": "pha",
@@ -1765,8 +2640,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 60
+        },
+        {
+            "label": "Heat",
+            "value": 40
+        },
+        {
+            "label": "Printability",
+            "value": 74
+        },
+        {
+            "label": "Weather",
+            "value": 34
+        },
+        {
+            "label": "Flex",
+            "value": 32
+        },
+        {
+            "label": "Finish",
+            "value": 78
+        }
+    ],
+    "statsSource": "AllPHA / Colorfabb PHA TDS"
   },
   {
     "slug": "lw-pla",
@@ -1796,8 +2696,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 38
+        },
+        {
+            "label": "Heat",
+            "value": 30
+        },
+        {
+            "label": "Printability",
+            "value": 72
+        },
+        {
+            "label": "Weather",
+            "value": 26
+        },
+        {
+            "label": "Flex",
+            "value": 24
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Colorfabb / Polymaker LW-PLA TDS"
   },
   {
     "slug": "lw-asa",
@@ -1828,8 +2753,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 42
+        },
+        {
+            "label": "Heat",
+            "value": 72
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 94
+        },
+        {
+            "label": "Flex",
+            "value": 30
+        },
+        {
+            "label": "Finish",
+            "value": 70
+        }
+    ],
+    "statsSource": "Colorfabb LW-ASA TDS"
   },
   {
     "slug": "pc-space-grade",
@@ -1855,8 +2805,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 78
+        },
+        {
+            "label": "Heat",
+            "value": 90
+        },
+        {
+            "label": "Printability",
+            "value": 40
+        },
+        {
+            "label": "Weather",
+            "value": 52
+        },
+        {
+            "label": "Flex",
+            "value": 22
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Space-grade PC TDS (low-outgassing, ESD)"
   },
   {
     "slug": "abs-v0",
@@ -1883,8 +2858,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 58
+        },
+        {
+            "label": "Heat",
+            "value": 78
+        },
+        {
+            "label": "Printability",
+            "value": 50
+        },
+        {
+            "label": "Weather",
+            "value": 32
+        },
+        {
+            "label": "Flex",
+            "value": 38
+        },
+        {
+            "label": "Finish",
+            "value": 68
+        }
+    ],
+    "statsSource": "UL94 V0 flame-retardant ABS TDS"
   },
   {
     "slug": "polycast",
@@ -1908,8 +2908,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 40
+        },
+        {
+            "label": "Heat",
+            "value": 32
+        },
+        {
+            "label": "Printability",
+            "value": 72
+        },
+        {
+            "label": "Weather",
+            "value": 22
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 60
+        }
+    ],
+    "statsSource": "Polymaker PolyCast TDS"
   },
   {
     "slug": "hdpe",
@@ -1933,8 +2958,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 60
+        },
+        {
+            "label": "Heat",
+            "value": 58
+        },
+        {
+            "label": "Printability",
+            "value": 28
+        },
+        {
+            "label": "Weather",
+            "value": 76
+        },
+        {
+            "label": "Flex",
+            "value": 70
+        },
+        {
+            "label": "Finish",
+            "value": 58
+        }
+    ],
+    "statsSource": "Community HDPE printing data"
   },
   {
     "slug": "petg-tungsten",
@@ -1960,8 +3010,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 62
+        },
+        {
+            "label": "Heat",
+            "value": 54
+        },
+        {
+            "label": "Printability",
+            "value": 64
+        },
+        {
+            "label": "Weather",
+            "value": 58
+        },
+        {
+            "label": "Flex",
+            "value": 22
+        },
+        {
+            "label": "Finish",
+            "value": 68
+        }
+    ],
+    "statsSource": "Virtual Foundry / community TDS"
   },
   {
     "slug": "copa",
@@ -1987,8 +3062,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 80
+        },
+        {
+            "label": "Heat",
+            "value": 78
+        },
+        {
+            "label": "Printability",
+            "value": 54
+        },
+        {
+            "label": "Weather",
+            "value": 64
+        },
+        {
+            "label": "Flex",
+            "value": 70
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Polymaker PolyMide CoPA TDS"
   },
   {
     "slug": "tpu-gf",
@@ -2021,8 +3121,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 70
+        },
+        {
+            "label": "Heat",
+            "value": 58
+        },
+        {
+            "label": "Printability",
+            "value": 56
+        },
+        {
+            "label": "Weather",
+            "value": 62
+        },
+        {
+            "label": "Flex",
+            "value": 72
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "TPU-GF TDS"
   },
   {
     "slug": "pla-support",
@@ -2046,8 +3171,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 40
+        },
+        {
+            "label": "Heat",
+            "value": 26
+        },
+        {
+            "label": "Printability",
+            "value": 84
+        },
+        {
+            "label": "Weather",
+            "value": 20
+        },
+        {
+            "label": "Flex",
+            "value": 18
+        },
+        {
+            "label": "Finish",
+            "value": 50
+        }
+    ],
+    "statsSource": "Polymaker / Prusament breakaway PLA support TDS"
   },
   {
     "slug": "pva",
@@ -2081,8 +3231,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 36
+        },
+        {
+            "label": "Heat",
+            "value": 30
+        },
+        {
+            "label": "Printability",
+            "value": 62
+        },
+        {
+            "label": "Weather",
+            "value": 10
+        },
+        {
+            "label": "Flex",
+            "value": 28
+        },
+        {
+            "label": "Finish",
+            "value": 44
+        }
+    ],
+    "statsSource": "PVA support TDS"
   },
   {
     "slug": "polysupport-pa",
@@ -2111,8 +3286,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 48
+        },
+        {
+            "label": "Heat",
+            "value": 72
+        },
+        {
+            "label": "Printability",
+            "value": 44
+        },
+        {
+            "label": "Weather",
+            "value": 42
+        },
+        {
+            "label": "Flex",
+            "value": 22
+        },
+        {
+            "label": "Finish",
+            "value": 56
+        }
+    ],
+    "statsSource": "Polymaker PolySupport PA TDS"
   },
   {
     "slug": "abs-kevlar",
@@ -2139,8 +3339,33 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 80
+        },
+        {
+            "label": "Heat",
+            "value": 76
+        },
+        {
+            "label": "Printability",
+            "value": 52
+        },
+        {
+            "label": "Weather",
+            "value": 34
+        },
+        {
+            "label": "Flex",
+            "value": 30
+        },
+        {
+            "label": "Finish",
+            "value": 78
+        }
+    ],
+    "statsSource": "ABS Kevlar TDS"
   },
   {
     "slug": "petg-ultra-glow",
@@ -2164,7 +3389,32 @@ export const filamentSeed = [
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
-    "stats": null,
-    "statsSource": null
+    "stats": [
+        {
+            "label": "Strength",
+            "value": 66
+        },
+        {
+            "label": "Heat",
+            "value": 54
+        },
+        {
+            "label": "Printability",
+            "value": 76
+        },
+        {
+            "label": "Weather",
+            "value": 52
+        },
+        {
+            "label": "Flex",
+            "value": 32
+        },
+        {
+            "label": "Finish",
+            "value": 72
+        }
+    ],
+    "statsSource": "Polymaker PolyLite Glow / community TDS"
   }
 ] as const;
