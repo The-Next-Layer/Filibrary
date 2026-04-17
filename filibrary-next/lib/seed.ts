@@ -147,8 +147,8 @@ export const filamentSeed = [
     "statsSource": "Polymaker TDS"
   },
   {
-    "slug": "",
-    "shortName": "",
+    "slug": "petg",
+    "shortName": "PETG",
     "fullName": "Polyethylene Terephthalate Glycol",
     "summary": "Despite being Jonathan's mortal enemy, PETG DOES blend strength, flexibility, and decent UV resistance, but it is hygroscopic, stringy, and sometimes annoyingly sticky on beds and nozzles. It remains a very practical functional filament when handled and dried well.",
     "sourceVideos": [
