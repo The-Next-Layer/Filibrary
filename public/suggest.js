@@ -50,6 +50,7 @@
           + '</button>'
         + '</div>'
 
+        + '<p class="suggest-prompt">What needs fixing?</p>'
         + '<div class="suggest-tabs" role="tablist">'
           + TABS.map(function (t) {
               var cls = t.key === active ? 'suggest-tab active' : 'suggest-tab';

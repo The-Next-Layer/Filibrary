@@ -197,6 +197,8 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
   img { max-width: 100%; display: block; }
   button { font-family: inherit; }
 
+  .hidden { display: none !important; }
+
   .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
   /* ── Header ── */
@@ -484,6 +486,7 @@ const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
   .suggest-modal-head h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); }
   .suggest-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem; }
 
+  .suggest-prompt { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
   .suggest-tabs { display: flex; gap: 0.15rem; border-bottom: 1.5px solid var(--border); margin-bottom: 0.85rem; overflow-x: auto; scrollbar-width: none; }
   .suggest-tabs::-webkit-scrollbar { display: none; }
   .suggest-tab { background: transparent; border: none; border-bottom: 2px solid transparent; padding: 0.55rem 0.75rem; font-size: 0.88rem; font-weight: 600; color: var(--text-muted); cursor: pointer; font-family: inherit; white-space: nowrap; }
