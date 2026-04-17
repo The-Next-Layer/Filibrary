@@ -66,13 +66,13 @@
             + '<label class="form-label">Vendor or brand name</label>'
             + '<input class="form-input" name="vendor_label" placeholder="e.g. Polymaker" maxlength="80" />'
             + '<label class="form-label" style="margin-top:0.75rem">Product or store URL</label>'
-            + '<input type="url" class="form-input" name="vendor_url" placeholder="https://shop.polymaker.com/..." required />'
+            + '<input type="url" class="form-input" name="vendor_url" placeholder="https://shop.polymaker.com/..." />'
           + '</div>'
 
           // Video pane
           + '<div class="suggest-pane hidden" data-pane="video">'
             + '<label class="form-label">YouTube URL</label>'
-            + '<input type="url" class="form-input" name="video_url" placeholder="https://youtu.be/..." required />'
+            + '<input type="url" class="form-input" name="video_url" placeholder="https://youtu.be/..." />'
             + '<label class="form-label" style="margin-top:0.75rem">Video title (optional)</label>'
             + '<input class="form-input" name="video_title" placeholder="e.g. PLA vs PETG comparison" maxlength="120" />'
           + '</div>'
@@ -96,7 +96,7 @@
           // Note pane
           + '<div class="suggest-pane hidden" data-pane="note">'
             + '<label class="form-label">What should we change or add?</label>'
-            + '<textarea class="form-textarea" name="note" maxlength="800" placeholder="Tell us in plain English — we\'ll review." required></textarea>'
+            + '<textarea class="form-textarea" name="note" maxlength="800" placeholder="Tell us in plain English — we\'ll review."></textarea>'
           + '</div>'
 
           + '<div class="report-msg" aria-live="polite"></div>'
