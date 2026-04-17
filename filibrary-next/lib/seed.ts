@@ -112,7 +112,7 @@ export const filamentSeed = [
       },
       {
         "label": "Fillamentum",
-        "url": "https://shop.fillamentum.com/en-in/collections/petg?utm_source=thenextlayer&utm_medium=influencers"
+        "url": "https://shop.fillamentum.com/en-in/collections/?utm_source=thenextlayer&utm_medium=influencers"
       }
     ],
     "heroImageUrl": "",
@@ -147,10 +147,10 @@ export const filamentSeed = [
     "statsSource": "Polymaker TDS"
   },
   {
-    "slug": "petg",
-    "shortName": "PETG",
+    "slug": "",
+    "shortName": "",
     "fullName": "Polyethylene Terephthalate Glycol",
-    "summary": "PETG blends strength, flexibility, and decent UV resistance, but it is hygroscopic, stringy, and sometimes annoyingly sticky on beds and nozzles. It remains a very practical functional filament when handled and dried well.",
+    "summary": "Despite being Jonathan's mortal enemy, PETG DOES blend strength, flexibility, and decent UV resistance, but it is hygroscopic, stringy, and sometimes annoyingly sticky on beds and nozzles. It remains a very practical functional filament when handled and dried well.",
     "sourceVideos": [
       "The 5 Filament Types You Need to Know (And What They're Good For)"
     ],
