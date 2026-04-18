@@ -1849,7 +1849,12 @@ export const filamentSeed = [
       "Durable",
       "Eco / Bio-Based"
     ],
-    "purchaseLinks": [],
+    "purchaseLinks": [
+      {
+        "label": "Filamentum",
+        "url": "https://fillamentum.com/collections/fishy-filaments-by-fillamentum/"
+      }
+    ],
     "heroImageUrl": "",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
