@@ -69,7 +69,9 @@ const panelData = filaments.map((f) => ({
             class="filament-card"
             data-slug={f.slug}
             data-tags={JSON.stringify(f.tags)}
-            data-search={`${f.shortName} ${f.fullName} ${f.summary} ${f.tags.join(' ')}`.toLowerCase()}
+            data-name={`${f.shortName} ${f.fullName}`.toLowerCase()}
+            data-aliases={(((f as any).aliases ?? []) as string[]).join(' ').toLowerCase()}
+            data-summary={f.summary.toLowerCase()}
           >
             <div class="card-header">
               <span class="card-short">{f.shortName}</span>

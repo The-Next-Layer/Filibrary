@@ -38,9 +38,9 @@
   var STAT_LABELS = ['Strength','Heat','Printability','Weather','Flex','Finish'];
   var ALL_TAGS = [
     'Abrasive','Aesthetic','Beginner Friendly','Challenging','Chemical Resistant','Composite',
-    'Core Material','Durable','Eco / Bio-Based','Electronics','Engineering','Exotic','Flexible',
-    'High Heat','Hygroscopic','Lightweight','Outdoor','Print Enclosed',
-    'Specialty','Support',
+    'Core Material','Durable','Eco / Bio-Based','Electronics','Engineering','ESD Safe','Exotic',
+    'Fire Retardant','Flexible','High Heat','Hygroscopic','Lightweight','MMU/AMS Safe',
+    'Outdoor','Print Enclosed','Specialty','Support',
   ];
 
   function buildModal(slug, activeTab) {

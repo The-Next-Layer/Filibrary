@@ -15,7 +15,7 @@ function tagClass(tag: string) {
 // Build radar SVG server-side
 function buildRadar(stats: { label: string; value: number }[]) {
   if (!stats || stats.length === 0) return '';
-  const size = 340, cx = size / 2, cy = size / 2, r = 110;
+  const size = 420, cx = size / 2, cy = size / 2, r = 110;
   const n = stats.length;
   const angleFor = (i: number) => (Math.PI * 2 * i / n) - Math.PI / 2;
 

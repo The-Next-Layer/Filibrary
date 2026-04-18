@@ -26,7 +26,7 @@
 
   function renderRadar(stats) {
     if (!stats || stats.length === 0) return '';
-    var size = 320, cx = size / 2, cy = size / 2, r = 100;
+    var size = 400, cx = size / 2, cy = size / 2, r = 100;
     var n = stats.length;
     var angleFor = function (i) { return (Math.PI * 2 * i / n) - Math.PI / 2; };
 
@@ -267,31 +267,79 @@
   var noResults   = document.getElementById('no-results');
   var clearBtn    = document.getElementById('clear-btn');
 
-  var activeTag = 'all';
+  var activeTags = {};           // { tagName: true } — empty means "All"
   var searchQuery = '';
 
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  // Quick alias layer so "pla plus" / "pla pro" match a card whose aliases
+  // list contains them, even when the user types them with/without the '+'.
+  function normalize(s) { return String(s || '').toLowerCase().replace(/\++/g, ' plus').replace(/\s+/g, ' ').trim(); }
+
+  function cardMatchesQuery(card, q) {
+    if (!q) return true;
+    var name    = normalize(card.getAttribute('data-name'));
+    var aliases = normalize(card.getAttribute('data-aliases'));
+    var tagsStr = (card.getAttribute('data-tags') || '').toLowerCase();
+    var summary = normalize(card.getAttribute('data-summary'));
+    var qn = normalize(q);
+
+    // Word-boundary match against name / aliases / tags — handles short queries
+    // like "PLA" so we don't match every summary that happens to contain "pla".
+    var boundaryRe = new RegExp('(^|[^a-z0-9])' + escapeRe(qn));
+    if (boundaryRe.test(name))    return true;
+    if (boundaryRe.test(aliases)) return true;
+    if (boundaryRe.test(tagsStr)) return true;
+
+    // Summary match requires a longer query so single-letter/3-letter queries
+    // stay focused on names.
+    if (qn.length >= 5 && summary.indexOf(qn) >= 0) return true;
+
+    return false;
+  }
+
+  function activeTagList() {
+    var out = [];
+    for (var k in activeTags) if (activeTags[k]) out.push(k);
+    return out;
+  }
+
   function applyFilters() {
+    var tagList = activeTagList();
     var visible = 0;
     for (var i = 0; i < cards.length; i++) {
       var card = cards[i];
-      var tagsData = [];
-      try { tagsData = JSON.parse(card.getAttribute('data-tags') || '[]'); } catch (e) {}
-      var search = (card.getAttribute('data-search') || '');
-      var tagMatch = activeTag === 'all' || tagsData.indexOf(activeTag) >= 0;
-      var searchMatch = !searchQuery || search.indexOf(searchQuery.toLowerCase()) >= 0;
+      var cardTags = [];
+      try { cardTags = JSON.parse(card.getAttribute('data-tags') || '[]'); } catch (e) {}
+      // AND across selected tags: card must have every active tag.
+      var tagMatch = true;
+      for (var j = 0; j < tagList.length; j++) {
+        if (cardTags.indexOf(tagList[j]) < 0) { tagMatch = false; break; }
+      }
+      var searchMatch = cardMatchesQuery(card, searchQuery);
       var show = tagMatch && searchMatch;
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     }
     if (countEl) countEl.textContent = visible + ' material' + (visible !== 1 ? 's' : '');
     if (noResults) noResults.classList.toggle('hidden', visible > 0);
+
+    // Update filter-tag button states.
+    for (var x = 0; x < filterTags.length; x++) {
+      var t = filterTags[x].getAttribute('data-tag') || '';
+      var on = (t === 'all') ? (tagList.length === 0) : !!activeTags[t];
+      filterTags[x].classList.toggle('active', on);
+    }
   }
 
   for (var t = 0; t < filterTags.length; t++) {
     filterTags[t].addEventListener('click', function (ev) {
-      activeTag = ev.currentTarget.getAttribute('data-tag') || 'all';
-      for (var x = 0; x < filterTags.length; x++) {
-        filterTags[x].classList.toggle('active', filterTags[x].getAttribute('data-tag') === activeTag);
+      var tag = ev.currentTarget.getAttribute('data-tag') || 'all';
+      if (tag === 'all') {
+        activeTags = {};
+      } else {
+        if (activeTags[tag]) delete activeTags[tag];
+        else activeTags[tag] = true;
       }
       applyFilters();
     });
@@ -306,12 +354,9 @@
 
   if (clearBtn) {
     clearBtn.addEventListener('click', function () {
-      activeTag = 'all';
+      activeTags = {};
       searchQuery = '';
       if (searchInput) searchInput.value = '';
-      for (var x = 0; x < filterTags.length; x++) {
-        filterTags[x].classList.toggle('active', filterTags[x].getAttribute('data-tag') === 'all');
-      }
       applyFilters();
     });
   }

@@ -72,6 +72,60 @@ export const filamentSeed = [
     "statsSource": "Polymaker TDS"
   },
   {
+    "slug": "pla-pro",
+    "shortName": "PLA+ / PRO",
+    "fullName": "Enhanced PLA (Plus / Pro)",
+    "summary": "Toughened versions of standard PLA — typically branded PLA+ (Sunlu) or PLA Pro / PolyMax (Polymaker). Roughly the same printability and heat limits as plain PLA, but noticeably better impact resistance and layer adhesion. A drop-in upgrade for functional parts that would normally crack in regular PLA.",
+    "aliases": ["PLA Plus", "PLA Pro", "PLA+", "PolyMax PLA", "Tough PLA"],
+    "sourceVideos": [],
+    "videoReferences": [],
+    "tags": [
+      "Beginner Friendly",
+      "Core Material",
+      "Durable"
+    ],
+    "purchaseLinks": [
+      {
+        "label": "Polymaker (PolyLite PLA Pro)",
+        "url": "https://shop.polymaker.com/?aff=457"
+      },
+      {
+        "label": "SUNLU (PLA+)",
+        "url": "https://www.sunlu.com/?sca_ref=4049874.H3GK5aIQzV"
+      }
+    ],
+    "heroImageUrl": "",
+    "heroImageCreditLabel": "",
+    "heroImageCreditUrl": "",
+    "stats": [
+      {
+        "label": "Strength",
+        "value": 80
+      },
+      {
+        "label": "Heat",
+        "value": 32
+      },
+      {
+        "label": "Printability",
+        "value": 92
+      },
+      {
+        "label": "Weather",
+        "value": 26
+      },
+      {
+        "label": "Flex",
+        "value": 42
+      },
+      {
+        "label": "Finish",
+        "value": 85
+      }
+    ],
+    "statsSource": "Sunlu PLA+ and Polymaker PolyLite PLA Pro TDS / community testing"
+  },
+  {
     "slug": "tpu",
     "shortName": "TPU",
     "fullName": "Thermoplastic Polyurethane",
