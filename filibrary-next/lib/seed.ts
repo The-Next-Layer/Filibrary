@@ -1564,6 +1564,10 @@ export const filamentSeed = [
       {
         "label": "3DXTECH",
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
+      },
+      {
+        "label": "3D Fuel",
+        "url": "https://www.3dfuel.com/collections/1-75mm-pro-pctg?srsltid=AfmBOoo8OAX7_2aZGsJLR2OL4Y3zsTl9xBHce7uQF9B29vhIWgRxxXKg"
       }
     ],
     "heroImageUrl": "",
