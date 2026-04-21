@@ -1568,6 +1568,10 @@ export const filamentSeed = [
       {
         "label": "3D Fuel",
         "url": "https://www.3dfuel.com/collections/1-75mm-pro-pctg?srsltid=AfmBOoo8OAX7_2aZGsJLR2OL4Y3zsTl9xBHce7uQF9B29vhIWgRxxXKg"
+      },
+      {
+        "label": "American Filament",
+        "url": "https://americanfilament.us"
       }
     ],
     "heroImageUrl": "",
