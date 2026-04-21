@@ -3535,4 +3535,61 @@ export const filamentSeed = [
     ],
     "statsSource": "Inslogic TDS"
   }
+,
+  {
+    "slug": "pbt",
+    "shortName": "PBT",
+    "fullName": "Polybutylene Terephthalate",
+    "summary": "PBT+ is a rather obscure filament that provides many of the same properties as nylon but absorbs less moisture (humidity), which allows PBT+ to maintain its shape in wet environments.\nPBT+ is often used as a substitute for Nylon 6.6 or 6.12 and has better wear resistance than polypropylene or polystyrene. PBT has good mechanical properties in relation to stretching, twisting, and bending (good bend recovery). PBT is resistant to solvents.\nPBT+ has high UV resistance.",
+    "sourceVideos": [],
+    "videoReferences": [],
+    "tags": [
+      "Abrasive",
+      "Challenging",
+      "Chemical Resistant",
+      "Durable",
+      "Electronics",
+      "Exotic",
+      "High Heat",
+      "Outdoor",
+      "Print Enclosed",
+      "Specialty"
+    ],
+    "purchaseLinks": [
+      {
+        "label": "https://3deksperten.dk/products/pbt-3de-premium-pirate-black-1-75mm",
+        "url": "https://3deksperten.dk/products/pbt-3de-premium-pirate-black-1-75mm"
+      }
+    ],
+    "heroImageUrl": "",
+    "heroImageCreditLabel": "",
+    "heroImageCreditUrl": "",
+    "stats": [
+      {
+        "label": "Strength",
+        "value": 76
+      },
+      {
+        "label": "Heat",
+        "value": 60
+      },
+      {
+        "label": "Printability",
+        "value": 37
+      },
+      {
+        "label": "Weather",
+        "value": 82
+      },
+      {
+        "label": "Flex",
+        "value": 0
+      },
+      {
+        "label": "Finish",
+        "value": 100
+      }
+    ],
+    "statsSource": "Private testing from one small sample"
+  }
 ] as const;
