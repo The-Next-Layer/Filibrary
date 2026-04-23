@@ -12,6 +12,24 @@ function tagClass(tag: string) {
   return 'tag tag-' + tag.replace(/\s+/g, '-').replace(/\//g, '-');
 }
 
+function withUTM(url: string, slug: string, label: string): string {
+  if (!url) return url;
+  try {
+    const u = new URL(url);
+    u.searchParams.set('utm_source', 'filibrary');
+    u.searchParams.set('utm_medium', 'referral');
+    u.searchParams.set('utm_campaign', slug);
+    const content = label.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    if (content) u.searchParams.set('utm_content', content);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
+const shareUrl = new URL(`/filaments/${f.slug}`, Astro.site ?? 'https://filibrary.thenextlayer.com').toString();
+const shareText = `${f.shortName} — ${f.fullName} on Filibrary`;
+
 // Build radar SVG server-side
 function buildRadar(stats: { label: string; value: number }[]) {
   if (!stats || stats.length === 0) return '';
@@ -97,6 +115,22 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
       <div class="detail-grid">
         <div class="detail-main">
 
+          {f.heroImageUrl && (
+            <figure class="detail-hero">
+              <img src={f.heroImageUrl} alt={`Sample print in ${f.shortName}`} loading="lazy" />
+              {f.heroImageCreditLabel && (
+                <figcaption class="detail-hero-credit">
+                  Photo:{' '}
+                  {f.heroImageCreditUrl ? (
+                    <a href={f.heroImageCreditUrl} target="_blank" rel="noopener noreferrer">{f.heroImageCreditLabel}</a>
+                  ) : (
+                    <span>{f.heroImageCreditLabel}</span>
+                  )}
+                </figcaption>
+              )}
+            </figure>
+          )}
+
           {f.stats && f.stats.length > 0 ? (
             <section class="detail-section">
               <h2>Performance</h2>
@@ -149,7 +183,7 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
             {f.purchaseLinks && f.purchaseLinks.length > 0 ? (
               <div class="buy-list">
                 {f.purchaseLinks.map((link) => (
-                  <a href={link.url} target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">
+                  <a href={withUTM(link.url, f.slug, link.label)} target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">
                     <span>{link.label}</span>
                     <span class="btn-buy-arrow">→</span>
                   </a>
@@ -158,6 +192,39 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
             ) : (
               <p class="no-links">No purchase links yet. <button class="link-btn" type="button" data-suggest={f.slug} data-suggest-tab="vendor">Suggest a vendor</button>.</p>
             )}
+          </div>
+
+          <div class="aside-card share-card">
+            <h2>Share</h2>
+            <p class="share-text">Help other makers find this filament.</p>
+            <button
+              type="button"
+              class="btn-share"
+              data-share-url={shareUrl}
+              data-share-text={shareText}
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <span class="btn-share-label">Share filament</span>
+            </button>
+            <div class="share-socials">
+              <a class="share-icon" target="_blank" rel="noopener noreferrer" title="Share on X" aria-label="Share on X"
+                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a class="share-icon" target="_blank" rel="noopener noreferrer" title="Share on Reddit" aria-label="Share on Reddit"
+                 href={`https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}`}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 12.07a2.16 2.16 0 0 0-3.66-1.55 10.7 10.7 0 0 0-5.74-1.81l1-4.6 3.2.7a1.54 1.54 0 1 0 .15-.92l-3.55-.78a.46.46 0 0 0-.55.36l-1.1 5.24a10.7 10.7 0 0 0-5.83 1.81 2.16 2.16 0 1 0-2.36 3.51 4.27 4.27 0 0 0-.05.66c0 3.34 3.89 6.05 8.69 6.05s8.69-2.71 8.69-6.05a4.27 4.27 0 0 0-.05-.66 2.17 2.17 0 0 0 1.16-1.96zM7 13.5a1.5 1.5 0 1 1 1.5 1.5A1.5 1.5 0 0 1 7 13.5zm8.71 4.04A5.66 5.66 0 0 1 12 18.62a5.66 5.66 0 0 1-3.71-1.08.4.4 0 1 1 .47-.65 4.92 4.92 0 0 0 3.24.91 4.92 4.92 0 0 0 3.24-.91.4.4 0 1 1 .47.65zM15.5 15a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5z"/></svg>
+              </a>
+              <a class="share-icon" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook"
+                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
+              </a>
+              <a class="share-icon" target="_blank" rel="noopener noreferrer" title="Share via Email" aria-label="Share via Email"
+                 href={`mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(shareUrl)}`}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </a>
+            </div>
+            <span class="share-toast" aria-live="polite"></span>
           </div>
 
           <div class="aside-card support-card">
@@ -189,6 +256,35 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
 
     </div>
   </div>
+
+  <script>
+    const shareBtn = document.querySelector<HTMLButtonElement>('.btn-share');
+    const toast = document.querySelector<HTMLElement>('.share-toast');
+    const showToast = (msg: string) => {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      window.setTimeout(() => toast.classList.remove('visible'), 1800);
+    };
+    shareBtn?.addEventListener('click', async () => {
+      const url = shareBtn.dataset.shareUrl || window.location.href;
+      const text = shareBtn.dataset.shareText || document.title;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: text, text, url });
+          return;
+        } catch (err) {
+          if ((err as DOMException)?.name === 'AbortError') return;
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('Link copied!');
+      } catch {
+        showToast('Press Ctrl+C to copy');
+      }
+    });
+  </script>
 
 </Layout>
 
@@ -236,4 +332,34 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
   .detail-report-row { display: flex; justify-content: flex-end; gap: 0.25rem; margin: -0.5rem 0 1rem; flex-wrap: wrap; }
   .link-btn { background: none; border: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: inherit; font-family: inherit; padding: 0; }
   .link-btn:hover { text-decoration: underline; }
+
+  .detail-hero {
+    margin-bottom: 1.25rem; border-radius: var(--radius); overflow: hidden;
+    border: 1.5px solid var(--border); background: var(--surface);
+  }
+  .detail-hero img { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+  .detail-hero-credit { font-size: 0.75rem; color: var(--text-dim); padding: 0.5rem 0.85rem; background: var(--surface-alt); }
+  .detail-hero-credit a { color: var(--text-muted); text-decoration: underline; }
+  .detail-hero-credit a:hover { color: var(--accent); }
+
+  .share-card .share-text { font-size: 0.85rem; color: var(--text-muted); margin: -0.4rem 0 0.85rem; }
+  .btn-share {
+    display: inline-flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;
+    background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 600;
+    padding: 0.6rem 1rem; border-radius: 10px; border: none; cursor: pointer;
+    font-family: inherit; transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-share:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(249,115,22,0.28); }
+  .share-socials { display: flex; gap: 0.4rem; justify-content: center; margin-top: 0.7rem; }
+  .share-icon {
+    width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px; background: var(--surface-alt); color: var(--text-muted);
+    border: 1px solid var(--border); transition: color 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .share-icon:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .share-toast {
+    display: block; text-align: center; font-size: 0.78rem; color: #15803d;
+    margin-top: 0.55rem; min-height: 1em; opacity: 0; transition: opacity 0.2s;
+  }
+  .share-toast.visible { opacity: 1; }
 </style>
