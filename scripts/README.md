@@ -23,13 +23,19 @@ npm install   # installs sharp
 4. The script resizes each image to max 1200px wide JPEG (quality 82) at `public/filaments/<slug>.jpg`, then patches the three hero fields in `filibrary-next/lib/seed.ts`.
 5. Run `npm run dev` and spot-check a few pages. Commit when happy.
 
-## Optional photo credit
+## Photo credit
 
-Edit `scripts/hero-images.json` to add `credit` and `creditUrl` for any slug. If left blank, the image still displays but with no attribution line under it.
+**Automatic on macOS.** When you save an image via Safari/Chrome "Save Image As...", macOS tags the file with the source URL. The script reads that tag and auto-fills the credit as `Image courtesy of <Brand>` with a link back to the source page.
+
+You can see what was detected in the script output: `auto-credit: Polymaker (https://...)`.
+
+To override (wrong brand name, or you want a custom label), fill in `scripts/hero-images.json`:
 
 ```json
 "pla": { "credit": "Polymaker", "creditUrl": "https://polymaker.com/product/polylite-pla/" }
 ```
+
+Explicit config wins over auto-detection. If both are blank and macOS didn't tag the file, no credit line appears — the image still displays fine.
 
 ## Troubleshooting
 

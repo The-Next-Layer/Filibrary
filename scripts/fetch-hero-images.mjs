@@ -17,7 +17,11 @@
 import { readFile, readdir, writeFile, mkdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, basename } from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import sharp from 'sharp';
+
+const execFileP = promisify(execFile);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = dirname(__filename);
@@ -32,6 +36,46 @@ const PUBLIC_PATH = (slug) => `/filaments/${slug}.jpg`;
 const MAX_WIDTH = 1200;
 const JPEG_QUALITY = 82;
 const VALID_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif']);
+
+// Friendly brand names for known hostnames. Anything not in this map
+// falls back to a title-cased version of the second-to-last DNS label.
+const HOSTNAME_ALIASES = {
+  'polymaker.com':       'Polymaker',
+  'shop.polymaker.com':  'Polymaker',
+  'us.polymaker.com':    'Polymaker',
+  'prusa3d.com':         'Prusament',
+  'www.prusa3d.com':     'Prusament',
+  'prusa3d.de':          'Prusament',
+  'sunlu.com':           'SUNLU',
+  'www.sunlu.com':       'SUNLU',
+  '3dxtech.com':         '3DXTech',
+  'www.3dxtech.com':     '3DXTech',
+  'matterhackers.com':   'MatterHackers',
+  'www.matterhackers.com': 'MatterHackers',
+  'printables.com':      'Printables',
+  'www.printables.com':  'Printables',
+  'makerworld.com':      'MakerWorld',
+  'www.makerworld.com':  'MakerWorld',
+  'amazon.com':          'Amazon',
+  'www.amazon.com':      'Amazon',
+  'bambulab.com':        'Bambu Lab',
+  'us.store.bambulab.com': 'Bambu Lab',
+  'reddit.com':          'Reddit',
+  'i.redd.it':           'Reddit',
+  'fiberlogy.com':       'Fiberlogy',
+  'overture3d.com':      'Overture',
+  'hatchbox3d.com':      'HATCHBOX',
+};
+
+function hostnameToBrand(host) {
+  if (!host) return '';
+  if (HOSTNAME_ALIASES[host]) return HOSTNAME_ALIASES[host];
+  const bare = host.replace(/^www\./, '');
+  if (HOSTNAME_ALIASES[bare]) return HOSTNAME_ALIASES[bare];
+  const labels = bare.split('.');
+  const label  = labels.length >= 2 ? labels[labels.length - 2] : labels[0];
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
@@ -63,6 +107,29 @@ function patchSeed(seed, slug, { heroImageUrl, heroImageCreditLabel, heroImageCr
 
 async function dirExists(path) {
   try { const s = await stat(path); return s.isDirectory(); } catch { return false; }
+}
+
+// On macOS, files saved from Safari/Chrome carry a
+// kMDItemWhereFroms xattr containing the source URL(s).
+// Returns { pageUrl, imageUrl } if detectable, else {}.
+async function readWhereFrom(filePath) {
+  if (process.platform !== 'darwin') return {};
+  try {
+    const { stdout } = await execFileP('mdls', ['-raw', '-name', 'kMDItemWhereFroms', filePath], {
+      timeout: 5000,
+    });
+    if (!stdout || stdout.trim() === '(null)') return {};
+    const urls = [...stdout.matchAll(/"([^"]+)"/g)].map((m) => m[1]).filter(Boolean);
+    if (urls.length === 0) return {};
+    // Browsers typically write two entries: [imageUrl, pageUrl] or [pageUrl, imageUrl].
+    // Prefer a non-image URL as the credit link (i.e. the page the user was on).
+    const isImage = (u) => /\.(jpe?g|png|gif|webp|avif|svg|heic)(\?|$)/i.test(u);
+    const pageUrl  = urls.find((u) => !isImage(u)) || urls[0];
+    const imageUrl = urls.find((u) =>  isImage(u)) || null;
+    return { pageUrl, imageUrl };
+  } catch {
+    return {};
+  }
 }
 
 async function main() {
@@ -121,12 +188,26 @@ async function main() {
       }
     }
 
-    const cfg = config[slug] || {};
+    const cfg     = config[slug] || {};
+    const source  = await readWhereFrom(src);
+    const autoUrl = source.pageUrl || '';
+    let   autoLabel = '';
+    if (autoUrl) {
+      try { autoLabel = hostnameToBrand(new URL(autoUrl).hostname); } catch {}
+    }
+
+    const creditLabel = cfg.credit    ?? autoLabel;
+    const creditUrl   = cfg.creditUrl ?? autoUrl;
+
+    if (autoUrl && !cfg.credit && !cfg.creditUrl) {
+      console.log(`  auto-credit: ${creditLabel} (${autoUrl})`);
+    }
+
     try {
       seed = patchSeed(seed, slug, {
         heroImageUrl:         PUBLIC_PATH(slug),
-        heroImageCreditLabel: cfg.credit    ?? '',
-        heroImageCreditUrl:   cfg.creditUrl ?? '',
+        heroImageCreditLabel: creditLabel,
+        heroImageCreditUrl:   creditUrl,
       });
       results.ok.push(slug);
     } catch (err) {

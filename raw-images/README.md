@@ -38,12 +38,40 @@ The script will:
 
 You can process a single slug at a time: `npm run hero:fetch -- --only pla`
 
-## Optional: photo credit
+## Photo credit (automatic on macOS)
 
-If you want "Photo: Polymaker" to appear under an image, open
-`scripts/hero-images.json` and fill in the `credit` and `creditUrl`
-fields for that slug. Skip this if you don't care — the image still
-displays fine without credit.
+When you save an image from Safari or Chrome via **Save Image As...**,
+macOS automatically tags the file with the URL it came from. The script
+reads that tag and auto-populates the credit, so you'll see something
+like this under each image on the detail page:
+
+> Image courtesy of [Polymaker](https://polymaker.com/product/polylite-pla/)
+
+You'll see the detected credit in the script output:
+
+```
+[pla] pla.jpg → public/filaments/pla.jpg
+  auto-credit: Polymaker (https://polymaker.com/product/polylite-pla/)
+```
+
+### Overriding the auto-credit
+
+If the script guesses the wrong brand name (or you want a custom
+label), open `scripts/hero-images.json` and fill in the `credit` and/or
+`creditUrl` fields for that slug. Anything set there wins over the
+auto-detected value.
+
+### When it won't work
+
+Auto-credit relies on the `kMDItemWhereFroms` macOS extended attribute.
+It will be empty if:
+
+- You copied the file from somewhere else (no web origin)
+- You used a non-macOS machine to save it
+- You used "Save As" from an app that doesn't set that tag
+
+In those cases the credit line simply won't appear. Fill in
+`hero-images.json` manually if you want one.
 
 ## Notes
 
