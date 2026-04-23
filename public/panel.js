@@ -23,6 +23,18 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
+  function withUTM(url, slug, label) {
+    if (!url) return url;
+    try {
+      var u = new URL(url);
+      u.searchParams.set('utm_source', 'filibrary');
+      u.searchParams.set('utm_medium', 'referral');
+      u.searchParams.set('utm_campaign', slug);
+      var content = String(label || '').toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      if (content) u.searchParams.set('utm_content', content);
+      return u.toString();
+    } catch (_) { return url; }
+  }
 
   function renderRadar(stats) {
     if (!stats || stats.length === 0) return '';
@@ -85,6 +97,23 @@
       return '<span class="' + tagClass(t) + '">' + esc(t) + '</span>';
     }).join('');
 
+    var heroBlock = '';
+    if (f.heroImageUrl) {
+      var creditHtml = '';
+      if (f.heroImageCreditLabel) {
+        creditHtml = '<figcaption class="panel-hero-credit">Image courtesy of '
+          + (f.heroImageCreditUrl
+              ? '<a href="' + esc(f.heroImageCreditUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(f.heroImageCreditLabel) + '</a>'
+              : esc(f.heroImageCreditLabel))
+          + '</figcaption>';
+      }
+      heroBlock =
+        '<figure class="panel-hero">'
+          + '<img src="' + esc(f.heroImageUrl) + '" alt="Sample print in ' + esc(f.shortName) + '" loading="lazy" />'
+          + creditHtml
+        + '</figure>';
+    }
+
     var statsBlock;
     if (f.stats && f.stats.length > 0) {
       statsBlock =
@@ -110,7 +139,7 @@
           + '<h3>Where to Buy</h3>'
           + '<div class="buy-list">'
             + f.purchaseLinks.map(function (l) {
-                return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">'
+                return '<a href="' + esc(withUTM(l.url, f.slug, l.label)) + '" target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">'
                   + '<span>' + esc(l.label) + '</span><span class="btn-buy-arrow">→</span></a>';
               }).join('')
           + '</div>'
@@ -190,6 +219,7 @@
         + '<h2 class="panel-full">' + esc(f.fullName) + '</h2>'
         + '<p class="panel-summary">' + esc(f.summary) + '</p>'
       + '</header>'
+      + heroBlock
       + statsBlock
       + buyBlock
       + videosBlock
