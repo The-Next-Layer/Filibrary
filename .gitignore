@@ -5,3 +5,5 @@ dist/
 .astro/
 src/env.d.ts
 package-lock.json
+raw-images/*
+!raw-images/README.md

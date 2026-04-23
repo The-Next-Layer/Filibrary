@@ -406,6 +406,15 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .panel-full { font-size: 1.5rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; color: var(--text); margin-bottom: 0.65rem; }
   .panel-summary { font-size: 0.95rem; color: var(--text-muted); line-height: 1.65; }
 
+  .panel-hero {
+    margin: 0 0 1.25rem; border-radius: var(--radius); overflow: hidden;
+    border: 1.5px solid var(--border); background: var(--surface);
+  }
+  .panel-hero img { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+  .panel-hero-credit { font-size: 0.75rem; color: var(--text-dim); padding: 0.5rem 0.85rem; background: var(--surface-alt); }
+  .panel-hero-credit a { color: var(--text-muted); text-decoration: underline; }
+  .panel-hero-credit a:hover { color: var(--accent); }
+
   .panel-section { margin-bottom: 1.5rem; }
   .panel-section h3 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.85rem; }
   .stats-empty p { font-size: 0.9rem; color: var(--text-muted); }
