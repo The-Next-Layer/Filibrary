@@ -40,7 +40,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pla.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -94,7 +94,7 @@ export const filamentSeed = [
         "url": "https://www.sunlu.com/?sca_ref=4049874.H3GK5aIQzV"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pla-pro.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -169,7 +169,7 @@ export const filamentSeed = [
         "url": "https://shop.fillamentum.com/en-in/collections/?utm_source=thenextlayer&utm_medium=influencers"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/tpu.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -324,7 +324,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/abs.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -398,7 +398,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/asa.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -638,7 +638,7 @@ export const filamentSeed = [
         "url": "https://www.sunlu.com/?sca_ref=4049874.H3GK5aIQzV"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pvb.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -701,7 +701,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pp.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -998,7 +998,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pc.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -1132,7 +1132,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/petg-cf.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -1262,7 +1262,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/pa-cf.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -1446,7 +1446,7 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/abs-gf.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
@@ -3512,7 +3512,7 @@ export const filamentSeed = [
         "url": "https://www.amazon.com/Inslogic-High-Strength-Heat-Resistant-Retardant-Compatible/dp/B0FG2RT2FY/ref=sr_1_4?crid=3TLWFEC1PFHXZ&dib=eyJ2IjoiMSJ9.LFLIEhWXThAmTZkx05Cq2uIMsLd3WausZ0j80Gaa18Do0A2bZ9CxwUA6SzjNOEB6AXI5E_9CWJE6njw0TSLc9WLQark4z5FKpmIOhCEuo8bv32aQdikYW5daogUxpgnO1fxA13uj3ZqIYcS2D_7qgVVGqByIRHKHV3bdI-Zyc-_EcNoV7I-FZdsWgRvhYnwTHd8Rx0KNAnHon393XMPMYhCb85bfRIozb0MdHr1dNMc.eR3hNDdr6cklR3uxIm5mreIvhpXZ80VS0VW3Hf1-nQE&dib_tag=se&keywords=peek%2Bfilament&qid=1776452467"
       }
     ],
-    "heroImageUrl": "",
+    "heroImageUrl": "/filaments/peek.jpg",
     "heroImageCreditLabel": "",
     "heroImageCreditUrl": "",
     "stats": [
