@@ -41,7 +41,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/pla.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Sunlu",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -95,7 +95,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/pla-pro.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Sunlu",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -170,7 +170,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/tpu.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Polymaker",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -250,8 +250,8 @@ export const filamentSeed = [
         "url": "https://www.3dxtech.com/?sca_ref=7992337.FNGNSNu3XtMmGG4X"
       }
     ],
-    "heroImageUrl": "",
-    "heroImageCreditLabel": "",
+    "heroImageUrl": "/filaments/petg.jpg",
+    "heroImageCreditLabel": "Polymaker",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -325,7 +325,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/abs.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Polymaker",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -399,7 +399,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/asa.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Sunlu",
     "heroImageCreditUrl": "",
     "stats": [
       {
@@ -1263,7 +1263,7 @@ export const filamentSeed = [
       }
     ],
     "heroImageUrl": "/filaments/pa-cf.jpg",
-    "heroImageCreditLabel": "",
+    "heroImageCreditLabel": "Polymaker",
     "heroImageCreditUrl": "",
     "stats": [
       {
