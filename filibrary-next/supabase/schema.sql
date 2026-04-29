@@ -67,6 +67,18 @@ create table if not exists public.gallery_images (
   created_at timestamptz not null default now()
 );
 
+-- These tables are written exclusively by the admin Edge Function via the
+-- service role (which bypasses RLS) and read at build time by lib/seed.ts.
+-- RLS is enabled with no policies so anon and authenticated roles cannot
+-- access them through PostgREST.
+alter table public.filaments enable row level security;
+alter table public.tags enable row level security;
+alter table public.filament_tags enable row level security;
+alter table public.brands enable row level security;
+alter table public.affiliate_links enable row level security;
+alter table public.video_references enable row level security;
+alter table public.gallery_images enable row level security;
+
 create table if not exists public.community_submissions (
   id uuid primary key default gen_random_uuid(),
   short_name text not null,
