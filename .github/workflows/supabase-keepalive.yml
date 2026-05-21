@@ -1,0 +1,39 @@
+name: Supabase keepalive
+
+# Free-tier Supabase projects auto-pause after 7 days of database inactivity.
+# This pings the REST API twice a week so the project stays awake even if the
+# live site has no submissions during a quiet stretch.
+
+on:
+  schedule:
+    # 06:00 UTC every Monday and Thursday (max gap: ~3.5 days, well under 7).
+    - cron: '0 6 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          set -eu
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON:-}" ]; then
+            echo "PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY secret is missing" >&2
+            exit 1
+          fi
+          # A SELECT on filaments runs through PostgREST -> PostgreSQL (RLS
+          # is evaluated on the DB side), which counts as database activity
+          # even though anon gets back [] because of the policies on this table.
+          status=$(curl -sS -o /tmp/body -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/filaments?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON" \
+            -H "Authorization: Bearer $SUPABASE_ANON")
+          echo "HTTP $status at $(date -u +%FT%TZ)"
+          # 200 (empty array) is the expected response. Anything else fails the run.
+          if [ "$status" != "200" ]; then
+            cat /tmp/body
+            exit 1
+          fi
