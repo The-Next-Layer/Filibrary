@@ -173,9 +173,29 @@
         + '</section>';
     }
 
-    var related = data.filter(function (r) {
-      return r.slug !== f.slug && r.tags.some(function (t) { return (f.tags || []).indexOf(t) >= 0; });
-    }).slice(0, 4);
+    var related = (function () {
+      function stem(s) { return String(s || '').split('-')[0]; }
+      function score(a, b) {
+        var aRel = a.related || [];
+        var bRel = b.related || [];
+        if (aRel.indexOf(b.slug) >= 0 || bRel.indexOf(a.slug) >= 0) return 1000;
+        var sc = 0;
+        var sa = stem(a.slug), sb = stem(b.slug);
+        if (sa && sb && sa === sb) sc += 20;
+        else if (sa.length >= 2 && sb.length >= 2 && (sa.indexOf(sb) === 0 || sb.indexOf(sa) === 0)) sc += 10;
+        var aTags = a.tags || [];
+        var bTags = b.tags || [];
+        for (var i = 0; i < bTags.length; i++) if (aTags.indexOf(bTags[i]) >= 0) sc += 1;
+        return sc;
+      }
+      return data
+        .filter(function (r) { return r.slug !== f.slug; })
+        .map(function (r) { return { r: r, s: score(f, r) }; })
+        .filter(function (x) { return x.s > 0; })
+        .sort(function (x, y) { return y.s - x.s; })
+        .slice(0, 4)
+        .map(function (x) { return x.r; });
+    })();
 
     var relatedBlock = '';
     if (related.length > 0) {

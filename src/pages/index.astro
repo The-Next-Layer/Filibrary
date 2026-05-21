@@ -15,6 +15,7 @@ const panelData = filaments.map((f) => ({
   fullName: f.fullName,
   summary: f.summary,
   tags: f.tags,
+  related: (f as any).related ?? [],
   stats: f.stats ?? [],
   statsSource: f.statsSource ?? '',
   purchaseLinks: f.purchaseLinks ?? [],
