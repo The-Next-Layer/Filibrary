@@ -22,8 +22,8 @@ The admin "Approve" action commits a new filament entry to `filibrary-next/lib/s
 
 1. Go to https://github.com/settings/personal-access-tokens/new (fine-grained tokens).
 2. **Token name:** `filibrary-admin-api`
-3. **Resource owner:** your user (jonathanalevi)
-4. **Repository access:** Only select repositories → choose `jonathanalevi/Filibrary`.
+3. **Resource owner:** the org that owns the repo (e.g. `The-Next-Layer`)
+4. **Repository access:** Only select repositories → choose `The-Next-Layer/filibrary`.
 5. **Repository permissions:**
    - **Contents:** Read and write ← the only one required
 6. **Expiration:** 1 year (you'll rotate it then).
@@ -54,7 +54,7 @@ Supabase → **Project Settings → Edge Functions → Secrets** (or run `supaba
 |---|---|
 | `ADMIN_PASSWORD`  | Any password you choose — this is what you'll type at `/admin` |
 | `GITHUB_TOKEN`    | The `github_pat_...` from step 2 |
-| `GITHUB_REPO`     | `jonathanalevi/Filibrary` |
+| `GITHUB_REPO`     | `The-Next-Layer/filibrary` |
 | `GITHUB_BRANCH`   | `main` |
 | `SEED_PATH`       | `filibrary-next/lib/seed.ts` |
 
@@ -64,7 +64,7 @@ CLI equivalent:
 ```bash
 supabase secrets set ADMIN_PASSWORD=choose-something-strong \
   GITHUB_TOKEN=github_pat_xxx \
-  GITHUB_REPO=jonathanalevi/Filibrary \
+  GITHUB_REPO=The-Next-Layer/filibrary \
   GITHUB_BRANCH=main \
   SEED_PATH=filibrary-next/lib/seed.ts
 ```
