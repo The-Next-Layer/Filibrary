@@ -12,7 +12,7 @@
 // Required secrets (Project Settings → Edge Functions → Secrets):
 //   ADMIN_PASSWORD            any string you choose
 //   GITHUB_TOKEN              fine-grained PAT with contents:write on the repo
-//   GITHUB_REPO               e.g. "jonathanalevi/Filibrary"
+//   GITHUB_REPO               e.g. "The-Next-Layer/filibrary"
 //   GITHUB_BRANCH             usually "main"
 //   SEED_PATH                 usually "filibrary-next/lib/seed.ts"
 // The Supabase runtime auto-injects SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
