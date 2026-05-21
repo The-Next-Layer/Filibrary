@@ -83,9 +83,33 @@ function buildRadar(stats: { label: string; value: number }[]) {
 
 const radarHtml = buildRadar(f.stats || []);
 
+function slugStem(slug: string): string {
+  return (slug || '').split('-')[0];
+}
+
+function relatedScore(a: any, b: any): number {
+  const aRelated: string[] = a.related || [];
+  const bRelated: string[] = b.related || [];
+  if (aRelated.includes(b.slug) || bRelated.includes(a.slug)) return 1000;
+
+  let score = 0;
+  const sa = slugStem(a.slug);
+  const sb = slugStem(b.slug);
+  if (sa && sb && sa === sb) score += 20;
+  else if (sa.length >= 2 && sb.length >= 2 && (sa.startsWith(sb) || sb.startsWith(sa))) score += 10;
+
+  const aTags = new Set<string>(a.tags || []);
+  for (const t of b.tags || []) if (aTags.has(t)) score += 1;
+  return score;
+}
+
 const related = filaments
-  .filter((r) => r.slug !== f.slug && r.tags.some((t) => f.tags.includes(t)))
-  .slice(0, 4);
+  .filter((r) => r.slug !== f.slug)
+  .map((r) => ({ r, score: relatedScore(f, r) }))
+  .filter((x) => x.score > 0)
+  .sort((x, y) => y.score - x.score)
+  .slice(0, 4)
+  .map((x) => x.r);
 
 const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenextlayer.com&no_recurring=0&item_name=Support+Filibrary+%E2%80%94+the+3D+printer+filament+library&currency_code=USD';
 ---

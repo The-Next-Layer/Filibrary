@@ -205,6 +205,7 @@ export const filamentSeed = [
     "shortName": "PETG",
     "fullName": "Polyethylene Terephthalate Glycol",
     "summary": "Despite being Jonathan's mortal enemy, PETG DOES blend strength, flexibility, and decent UV resistance, but it is hygroscopic, stringy, and sometimes annoyingly sticky on beds and nozzles. It remains a very practical functional filament when handled and dried well.",
+    "related": ["pctg", "petg-cf", "pet-cf"],
     "sourceVideos": [
       "The 5 Filament Types You Need to Know (And What They're Good For)"
     ],
