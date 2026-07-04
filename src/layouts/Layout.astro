@@ -1,12 +1,20 @@
 ---
+import { ptBrJs } from '../i18n/translations';
+
 export interface Props {
   title: string;
   description?: string;
+  lang?: string;
 }
+
+const lang = Astro.props.lang || 'en';
+const isPtBr = lang === 'pt-br';
 
 const {
   title,
-  description = 'A curated 3D printer filament reference library. Every material explained, compared, and linked to where you can buy it.',
+  description = isPtBr
+    ? 'Uma biblioteca de referência curada sobre filamentos para impressão 3D. Todos os materiais explicados, comparados e com links para compra.'
+    : 'A curated 3D printer filament reference library. Every material explained, compared, and linked to where you can buy it.',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://filibrary.thenextlayer.com');
@@ -16,16 +24,41 @@ const PAYPAL_URL = 'https://www.paypal.com/donate/?business=partnerships@thenext
 const SUPABASE_URL  = import.meta.env.PUBLIC_SUPABASE_URL  || '';
 const SUPABASE_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
+
+const basePath = isPtBr ? '/pt-br' : '';
+const titleFull = title === 'Filibrary'
+  ? (isPtBr ? 'Filibrary — A Biblioteca de Filamentos para Impressão 3D' : 'Filibrary — The 3D Printer Filament Library')
+  : `${title} | Filibrary`;
+
+const ui = isPtBr ? {
+  library: 'Biblioteca', submit: 'Enviar', support: 'Apoiar',
+  toggleDark: 'Alternar modo escuro', toggleMenu: 'Alternar menu',
+  footerTagline: 'A biblioteca de referência de filamentos para impressão 3D.<br/>Todos os materiais, explicados.',
+  findUseful: 'Achou útil?', donate: 'Doar via PayPal', site: 'Site',
+  filamentLibrary: 'Biblioteca de Filamentos', submitFilament: 'Enviar um Filamento',
+  contributeGithub: 'Contribuir no GitHub',
+  footerBottom: 'Desenvolvido por <a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a>. Código aberto no <a href="https://github.com/The-Next-Layer/filibrary" target="_blank" rel="noopener">GitHub</a> &mdash; PRs e issues são bem-vindos.',
+} : {
+  library: 'Library', submit: 'Submit', support: 'Support',
+  toggleDark: 'Toggle dark mode', toggleMenu: 'Toggle menu',
+  footerTagline: 'The 3D printer filament reference library.<br/>Every material, explained.',
+  findUseful: 'Find this useful?', donate: 'Donate via PayPal', site: 'Site',
+  filamentLibrary: 'Filament Library', submitFilament: 'Submit a Filament',
+  contributeGithub: 'Contribute on GitHub',
+  footerBottom: 'Built by <a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a>. Open source on <a href="https://github.com/The-Next-Layer/filibrary" target="_blank" rel="noopener">GitHub</a> &mdash; PRs and issues welcome.',
+};
+
+const jsTrans = isPtBr ? JSON.stringify(ptBrJs) : '';
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalURL} />
-  <title>{title === 'Filibrary' ? 'Filibrary — The 3D Printer Filament Library' : `${title} | Filibrary`}</title>
+  <title>{titleFull}</title>
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
@@ -40,6 +73,11 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
     window.__SUPABASE_URL__  = SUPABASE_URL;
     window.__SUPABASE_ANON__ = SUPABASE_ANON;
   </script>
+  {jsTrans && (
+    <script is:inline define:vars={{ jsTrans }}>
+      window.__T = JSON.parse(jsTrans);
+    </script>
+  )}
   <script is:inline>
     // Apply theme before paint to avoid flash.
     (function () {
@@ -67,21 +105,21 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   <header class="site-header">
     <div class="container">
       <div class="header-inner">
-        <a href="/" class="site-logo" aria-label="Filibrary home">
+        <a href={basePath || '/'} class="site-logo" aria-label="Filibrary home">
           <span class="logo-fi">Fi</span><span class="logo-library">Library</span>
         </a>
         <nav class="site-nav" aria-label="Primary">
-          <a href="/" class="nav-link">Library</a>
-          <a href="/submit" class="nav-link">Submit</a>
-          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <a href={basePath || '/'} class="nav-link">{ui.library}</a>
+          <a href="/submit" class="nav-link">{ui.submit}</a>
+          <button class="theme-toggle" id="theme-toggle" aria-label={ui.toggleDark} title={ui.toggleDark}>
             <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
             <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
           </button>
           <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" class="btn-support">
-            Support
+            {ui.support}
           </a>
         </nav>
-        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <button class="nav-toggle" aria-label={ui.toggleMenu} aria-expanded="false">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
       </div>
@@ -97,27 +135,27 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
       <div class="footer-grid">
         <div>
           <p class="footer-logo"><span class="logo-fi">Fi</span><span class="logo-library">Library</span></p>
-          <p class="footer-tagline">The 3D printer filament reference library.<br/>Every material, explained.</p>
+          <p class="footer-tagline" set:html={ui.footerTagline} />
         </div>
         <div class="footer-support">
-          <p class="footer-support-label">Find this useful?</p>
+          <p class="footer-support-label">{ui.findUseful}</p>
           <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" class="btn-paypal">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            Donate via PayPal
+            {ui.donate}
           </a>
         </div>
         <div>
-          <p class="footer-links-title">Site</p>
+          <p class="footer-links-title">{ui.site}</p>
           <ul class="footer-links">
-            <li><a href="/">Filament Library</a></li>
-            <li><a href="/submit">Submit a Filament</a></li>
-            <li><a href="https://github.com/The-Next-Layer/filibrary" target="_blank" rel="noopener">Contribute on GitHub</a></li>
+            <li><a href={basePath || '/'}>{ui.filamentLibrary}</a></li>
+            <li><a href="/submit">{ui.submitFilament}</a></li>
+            <li><a href="https://github.com/The-Next-Layer/filibrary" target="_blank" rel="noopener">{ui.contributeGithub}</a></li>
             <li><a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>Built by <a href="https://thenextlayer.com" target="_blank" rel="noopener">The Next Layer</a>. Open source on <a href="https://github.com/The-Next-Layer/filibrary" target="_blank" rel="noopener">GitHub</a> &mdash; PRs and issues welcome.</p>
+        <p set:html={ui.footerBottom} />
       </div>
     </div>
   </footer>
@@ -211,7 +249,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
 
   .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
-  /* ── Header ── */
+  /* Header */
   .site-header {
     background: var(--header-bg);
     backdrop-filter: saturate(140%) blur(12px);
@@ -268,7 +306,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
     .btn-support { align-self: flex-start; }
   }
 
-  /* ── Footer ── */
+  /* Footer */
   .site-footer { background: var(--bg-elevated); color: var(--text-muted); margin-top: 5rem; border-top: 1px solid var(--border); }
   .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; padding: 3rem 0 2rem; }
   .footer-logo { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
@@ -289,7 +327,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .footer-bottom { border-top: 1px solid var(--border); padding: 1.25rem 0; font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
   .footer-bottom a { color: var(--text-muted); } .footer-bottom a:hover { color: var(--text); }
 
-  /* ── Tag pills ── */
+  /* Tag pills */
   .tag {
     display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em;
     padding: 0.22rem 0.6rem; border-radius: 999px; background: var(--surface-alt); color: var(--text-muted);
@@ -331,7 +369,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   :root[data-theme="dark"] .tag-Specialty          { background: rgba(139,92,246,0.16); color: #c4b5fd; border-color: rgba(139,92,246,0.32); }
   :root[data-theme="dark"] .tag-Print-Enclosed     { background: rgba(249,115,22,0.14); color: #fdba74; border-color: rgba(249,115,22,0.28); }
 
-  /* ── Buttons ── */
+  /* Buttons */
   .btn {
     display: inline-flex; align-items: center; gap: 0.45rem;
     padding: 0.65rem 1.25rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
@@ -350,7 +388,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .btn-buy:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
   .btn-buy-arrow { color: var(--accent); font-weight: 700; }
 
-  /* ── Forms ── */
+  /* Forms */
   .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
   .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text); }
   .form-hint  { font-size: 0.8rem; color: var(--text-muted); }
@@ -368,7 +406,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text); }
   .checkbox-label input { accent-color: var(--accent); }
 
-  /* ── Radar chart ── */
+  /* Radar chart */
   .radar-wrap { display: flex; justify-content: center; padding: 0.5rem 0 0.25rem; }
   .radar { width: 100%; max-width: 420px; height: auto; }
   .radar-ring { fill: var(--surface-alt); stroke: var(--border); stroke-width: 1; opacity: 0.55; }
@@ -387,7 +425,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .radar-legend-item { display: inline-flex; align-items: center; gap: 0.35rem; }
   .radar-legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
-  /* ── Slide-out panel content ── */
+  /* Slide-out panel content */
   .panel-top { display: flex; justify-content: flex-end; padding-bottom: 0.25rem; position: sticky; top: 0; background: var(--bg-elevated); z-index: 2; }
   .panel-close {
     width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
@@ -449,7 +487,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .related-short { font-size: 0.8rem; font-weight: 800; color: var(--accent); min-width: 52px; }
   .related-full { font-size: 0.85rem; color: var(--text); }
 
-  /* ── Report button + modal ── */
+  /* Report button + modal */
   .panel-footer-row { padding-top: 0.5rem; margin-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.25rem; flex-wrap: wrap; }
   .suggest-link {
     display: inline-flex; align-items: center; gap: 0.4rem;
@@ -489,7 +527,7 @@ const CF_ANALYTICS_TOKEN = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || '';
   .report-msg.ok    { color: #15803d; }
   .report-msg.error { color: #b91c1c; }
 
-  /* ── Suggest modal (extends report-modal pattern) ── */
+  /* Suggest modal */
   .suggest-modal-wrap { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
   .suggest-modal-wrap.open { opacity: 1; pointer-events: auto; }
   .suggest-modal-backdrop { position: absolute; inset: 0; background: var(--overlay); }

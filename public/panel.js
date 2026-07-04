@@ -1,4 +1,10 @@
 (function () {
+  var T = window.__T || {};
+  var TT = T.tags || {};
+  var TS = T.statLabels || {};
+  function tTag(tag) { return TT[tag] || tag; }
+  function tStat(label) { return TS[label] || label; }
+
   var data = [];
   try {
     var el = document.getElementById('filament-data');
@@ -79,7 +85,7 @@
       var anchor = 'middle';
       if (Math.cos(la) > 0.35) anchor = 'start';
       else if (Math.cos(la) < -0.35) anchor = 'end';
-      labels += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label" text-anchor="' + anchor + '" dominant-baseline="middle">' + esc(stats[k].label) + '</text>';
+      labels += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" class="radar-label" text-anchor="' + anchor + '" dominant-baseline="middle">' + esc(tStat(stats[k].label)) + '</text>';
       var vx = cx + (r + 24) * Math.cos(la);
       var vy = cy + (r + 24) * Math.sin(la) + 14;
       labels += '<text x="' + vx.toFixed(1) + '" y="' + vy.toFixed(1) + '" class="radar-value" text-anchor="' + anchor + '" dominant-baseline="middle">' + esc(stats[k].value) + '</text>';
@@ -94,14 +100,14 @@
 
   function renderPanel(f) {
     var tagsHtml = (f.tags || []).map(function (t) {
-      return '<span class="' + tagClass(t) + '">' + esc(t) + '</span>';
+      return '<span class="' + tagClass(t) + '">' + esc(tTag(t)) + '</span>';
     }).join('');
 
     var heroBlock = '';
     if (f.heroImageUrl) {
       var creditHtml = '';
       if (f.heroImageCreditLabel) {
-        creditHtml = '<figcaption class="panel-hero-credit">Image courtesy of '
+        creditHtml = '<figcaption class="panel-hero-credit">' + (T.imageCourtesy || 'Image courtesy of ')
           + (f.heroImageCreditUrl
               ? '<a href="' + esc(f.heroImageCreditUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(f.heroImageCreditLabel) + '</a>'
               : esc(f.heroImageCreditLabel))
@@ -109,7 +115,7 @@
       }
       heroBlock =
         '<figure class="panel-hero">'
-          + '<img src="' + esc(f.heroImageUrl) + '" alt="Sample print in ' + esc(f.shortName) + '" loading="lazy" />'
+          + '<img src="' + esc(f.heroImageUrl) + '" alt="' + esc((T.samplePrint || 'Sample print in ') + f.shortName) + '" loading="lazy" />'
           + creditHtml
         + '</figure>';
     }
@@ -118,16 +124,16 @@
     if (f.stats && f.stats.length > 0) {
       statsBlock =
         '<section class="panel-section">'
-          + '<h3>Performance</h3>'
+          + '<h3>' + (T.performance || 'Performance') + '</h3>'
           + renderRadar(f.stats)
-          + (f.statsSource ? '<p class="stat-source">Source: ' + esc(f.statsSource) + '</p>' : '')
+          + (f.statsSource ? '<p class="stat-source">' + (T.source || 'Source: ') + esc(f.statsSource) + '</p>' : '')
         + '</section>';
     } else {
       statsBlock =
         '<section class="panel-section stats-empty">'
-          + '<h3>Performance</h3>'
-          + '<p>Detailed ratings for this material aren\'t available yet. '
-            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="stats">Suggest ratings</button>.'
+          + '<h3>' + (T.performance || 'Performance') + '</h3>'
+          + '<p>' + (T.noRatings || 'Detailed ratings for this material aren\'t available yet. ')
+            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="stats">' + (T.suggestRatings || 'Suggest ratings') + '</button>.'
           + '</p>'
         + '</section>';
     }
@@ -136,7 +142,7 @@
     if (f.purchaseLinks && f.purchaseLinks.length > 0) {
       buyBlock =
         '<section class="panel-section">'
-          + '<h3>Where to Buy</h3>'
+          + '<h3>' + (T.whereToBuy || 'Where to Buy') + '</h3>'
           + '<div class="buy-list">'
             + f.purchaseLinks.map(function (l) {
                 return '<a href="' + esc(withUTM(l.url, f.slug, l.label)) + '" target="_blank" rel="noopener noreferrer sponsored" class="btn-buy">'
@@ -147,9 +153,9 @@
     } else {
       buyBlock =
         '<section class="panel-section">'
-          + '<h3>Where to Buy</h3>'
-          + '<p class="no-links">No purchase links yet. '
-            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="vendor">Suggest a vendor</button>.'
+          + '<h3>' + (T.whereToBuy || 'Where to Buy') + '</h3>'
+          + '<p class="no-links">' + (T.noPurchaseLinks || 'No purchase links yet. ')
+            + '<button class="link-btn" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="vendor">' + (T.suggestVendor || 'Suggest a vendor') + '</button>.'
           + '</p>'
         + '</section>';
     }
@@ -158,7 +164,7 @@
     if (f.videoReferences && f.videoReferences.length > 0) {
       videosBlock =
         '<section class="panel-section">'
-          + '<h3>Referenced In</h3>'
+          + '<h3>' + (T.referencedIn || 'Referenced In') + '</h3>'
           + '<div class="video-grid">'
             + f.videoReferences.map(function (v) {
                 return '<a href="' + esc(v.url) + '" target="_blank" rel="noopener noreferrer" class="video-card">'
@@ -201,7 +207,7 @@
     if (related.length > 0) {
       relatedBlock =
         '<section class="panel-section">'
-          + '<h3>Related</h3>'
+          + '<h3>' + (T.related || 'Related') + '</h3>'
           + '<ul class="related-list">'
             + related.map(function (r) {
                 return '<li><button class="related-link" data-goto="' + esc(r.slug) + '" type="button">'
@@ -217,17 +223,17 @@
       '<section class="panel-footer-row">'
         + '<button class="suggest-link" type="button" data-suggest="' + esc(f.slug) + '" data-suggest-tab="vendor">'
           + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
-          + 'Suggest an edit'
+          + (T.suggestEdit || 'Suggest an edit')
         + '</button>'
         + '<button class="report-btn" id="report-btn" type="button" data-slug="' + esc(f.slug) + '">'
           + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'
-          + 'Report an issue'
+          + (T.reportIssue || 'Report an issue')
         + '</button>'
       + '</section>';
 
     inner.innerHTML =
       '<div class="panel-top">'
-        + '<button class="panel-close" id="panel-close" aria-label="Close panel" type="button">'
+        + '<button class="panel-close" id="panel-close" aria-label="' + (T.closePanel || 'Close panel') + '" type="button">'
           + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
         + '</button>'
       + '</div>'
@@ -310,20 +316,18 @@
     if (initial && bySlug[initial]) openPanel(initial);
   } catch (e) {}
 
-  // ── Search + filter ──
+  // Search + filter
   var searchInput = document.getElementById('search');
   var filterTags  = document.querySelectorAll('.filter-tag');
   var countEl     = document.getElementById('results-count');
   var noResults   = document.getElementById('no-results');
   var clearBtn    = document.getElementById('clear-btn');
 
-  var activeTags = {};           // { tagName: true } — empty means "All"
+  var activeTags = {};
   var searchQuery = '';
 
   function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
-  // Quick alias layer so "pla plus" / "pla pro" match a card whose aliases
-  // list contains them, even when the user types them with/without the '+'.
   function normalize(s) { return String(s || '').toLowerCase().replace(/\++/g, ' plus').replace(/\s+/g, ' ').trim(); }
 
   function cardMatchesQuery(card, q) {
@@ -334,15 +338,11 @@
     var summary = normalize(card.getAttribute('data-summary'));
     var qn = normalize(q);
 
-    // Word-boundary match against name / aliases / tags — handles short queries
-    // like "PLA" so we don't match every summary that happens to contain "pla".
     var boundaryRe = new RegExp('(^|[^a-z0-9])' + escapeRe(qn));
     if (boundaryRe.test(name))    return true;
     if (boundaryRe.test(aliases)) return true;
     if (boundaryRe.test(tagsStr)) return true;
 
-    // Summary match requires a longer query so single-letter/3-letter queries
-    // stay focused on names.
     if (qn.length >= 5 && summary.indexOf(qn) >= 0) return true;
 
     return false;
@@ -361,7 +361,6 @@
       var card = cards[i];
       var cardTags = [];
       try { cardTags = JSON.parse(card.getAttribute('data-tags') || '[]'); } catch (e) {}
-      // AND across selected tags: card must have every active tag.
       var tagMatch = true;
       for (var j = 0; j < tagList.length; j++) {
         if (cardTags.indexOf(tagList[j]) < 0) { tagMatch = false; break; }
@@ -371,10 +370,10 @@
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     }
-    if (countEl) countEl.textContent = visible + ' material' + (visible !== 1 ? 's' : '');
+    var matWord = T.materials ? (visible !== 1 ? T.materials : T.material) : (visible !== 1 ? 'materials' : 'material');
+    if (countEl) countEl.textContent = visible + ' ' + matWord;
     if (noResults) noResults.classList.toggle('hidden', visible > 0);
 
-    // Update filter-tag button states.
     for (var x = 0; x < filterTags.length; x++) {
       var t = filterTags[x].getAttribute('data-tag') || '';
       var on = (t === 'all') ? (tagList.length === 0) : !!activeTags[t];
