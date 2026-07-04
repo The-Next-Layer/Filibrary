@@ -1,5 +1,6 @@
 // Filibrary report flow — opens a small modal and posts to Supabase.
 (function () {
+  var T = window.__T || {};
   var SUPABASE_URL  = window.__SUPABASE_URL__;
   var SUPABASE_ANON = window.__SUPABASE_ANON__;
 
@@ -26,29 +27,29 @@
     wrap.className = 'report-modal-wrap';
     wrap.innerHTML =
       '<div class="report-modal-backdrop" data-close></div>'
-      + '<div class="report-modal" role="dialog" aria-modal="true" aria-label="Report an issue">'
+      + '<div class="report-modal" role="dialog" aria-modal="true" aria-label="' + esc(T.reportTitle || 'Report an issue') + '">'
         + '<div class="report-modal-head">'
-          + '<h3>Report an issue</h3>'
+          + '<h3>' + (T.reportTitle || 'Report an issue') + '</h3>'
           + '<button type="button" class="report-close" data-close aria-label="Close">'
             + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
           + '</button>'
         + '</div>'
-        + '<p class="report-sub">Reporting <strong>' + esc(slug) + '</strong>. We\'ll review and update the entry if needed.</p>'
+        + '<p class="report-sub">' + (T.reportSubPre || 'Reporting ') + '<strong>' + esc(slug) + '</strong>' + (T.reportSubPost || '. We\'ll review and update the entry if needed.') + '</p>'
         + '<form class="report-form">'
-          + '<label class="form-label">What\'s wrong?</label>'
+          + '<label class="form-label">' + (T.whatsWrong || 'What\'s wrong?') + '</label>'
           + '<select name="reason" class="form-select" required>'
-            + '<option value="inaccurate_info">Inaccurate information</option>'
-            + '<option value="broken_link">Broken purchase link</option>'
-            + '<option value="wrong_tag">Wrong tag / classification</option>'
-            + '<option value="outdated">Outdated — product changed</option>'
-            + '<option value="other">Other</option>'
+            + '<option value="inaccurate_info">' + (T.inaccurateInfo || 'Inaccurate information') + '</option>'
+            + '<option value="broken_link">' + (T.brokenLink || 'Broken purchase link') + '</option>'
+            + '<option value="wrong_tag">' + (T.wrongTag || 'Wrong tag / classification') + '</option>'
+            + '<option value="outdated">' + (T.outdated || 'Outdated — product changed') + '</option>'
+            + '<option value="other">' + (T.other || 'Other') + '</option>'
           + '</select>'
-          + '<label class="form-label" style="margin-top:0.8rem">Details (optional)</label>'
-          + '<textarea name="comment" class="form-textarea" maxlength="800" placeholder="Tell us what should be changed, or paste a source..."></textarea>'
+          + '<label class="form-label" style="margin-top:0.8rem">' + (T.detailsOptional || 'Details (optional)') + '</label>'
+          + '<textarea name="comment" class="form-textarea" maxlength="800" placeholder="' + esc(T.reportPlaceholder || 'Tell us what should be changed, or paste a source...') + '"></textarea>'
           + '<div class="report-msg" aria-live="polite"></div>'
           + '<div class="report-actions">'
-            + '<button type="button" class="btn btn-outline" data-close>Cancel</button>'
-            + '<button type="submit" class="btn btn-primary">Send report</button>'
+            + '<button type="button" class="btn btn-outline" data-close>' + (T.cancel || 'Cancel') + '</button>'
+            + '<button type="submit" class="btn btn-primary">' + (T.sendReport || 'Send report') + '</button>'
           + '</div>'
         + '</form>'
       + '</div>';
@@ -80,7 +81,7 @@
       msg.textContent = '';
       msg.className = 'report-msg';
       if (!SUPABASE_URL || !SUPABASE_ANON) {
-        msg.textContent = 'Reporting is not configured yet.';
+        msg.textContent = T.reportNotConfigured || 'Reporting is not configured yet.';
         msg.classList.add('error');
         return;
       }
@@ -88,7 +89,7 @@
       var comment = form.querySelector('[name="comment"]').value.trim();
       var submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending…';
+      submitBtn.textContent = T.sending || 'Sending…';
       try {
         var res = await fetch(SUPABASE_URL + '/rest/v1/filament_reports', {
           method: 'POST',
@@ -109,14 +110,14 @@
           var body = await res.text();
           throw new Error(body || ('HTTP ' + res.status));
         }
-        msg.textContent = 'Thanks — report received.';
+        msg.textContent = T.thanksReport || 'Thanks — report received.';
         msg.classList.add('ok');
         setTimeout(close, 1200);
       } catch (err) {
-        msg.textContent = (err && err.message) || 'Failed to send report.';
+        msg.textContent = (err && err.message) || (T.failedReport || 'Failed to send report.');
         msg.classList.add('error');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send report';
+        submitBtn.textContent = T.sendReport || 'Send report';
       }
     });
   }

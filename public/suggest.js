@@ -3,6 +3,7 @@
 // its own contribution row.
 // Exposes window.openSuggest(slug, tab) for other scripts to call.
 (function () {
+  var T = window.__T || {};
   var SUPABASE_URL  = window.__SUPABASE_URL__;
   var SUPABASE_ANON = window.__SUPABASE_ANON__;
 
@@ -29,19 +30,21 @@
   }
 
   var TABS = [
-    { key: 'vendor', label: 'Vendor',  desc: 'A shop or brand that sells this filament.' },
-    { key: 'video',  label: 'Video',   desc: 'A YouTube review or guide for this material.' },
-    { key: 'stats',  label: 'Ratings', desc: 'Rate each property 0–100.' },
-    { key: 'tags',   label: 'Tags',    desc: 'Tags you think should be on this filament.' },
-    { key: 'note',   label: 'Note',    desc: 'Anything else — we\'ll read and review.' },
+    { key: 'vendor', label: T.tabVendor || 'Vendor',  desc: T.tabVendorDesc || 'A shop or brand that sells this filament.' },
+    { key: 'video',  label: T.tabVideo || 'Video',   desc: T.tabVideoDesc || 'A YouTube review or guide for this material.' },
+    { key: 'stats',  label: T.tabRatings || 'Ratings', desc: T.tabRatingsDesc || 'Rate each property 0–100.' },
+    { key: 'tags',   label: T.tabTags || 'Tags',    desc: T.tabTagsDesc || 'Tags you think should be on this filament.' },
+    { key: 'note',   label: T.tabNote || 'Note',    desc: T.tabNoteDesc || 'Anything else — we\'ll read and review.' },
   ];
   var STAT_LABELS = ['Strength','Heat','Printability','Weather','Flex','Finish'];
+  var STAT_DISPLAY = T.statLabels || {};
   var ALL_TAGS = [
     'Abrasive','Aesthetic','Beginner Friendly','Challenging','Chemical Resistant','Composite',
     'Core Material','Durable','Eco / Bio-Based','Electronics','Engineering','ESD Safe','Exotic',
     'Fire Retardant','Flexible','High Heat','Hygroscopic','Lightweight','MMU/AMS Safe',
     'Outdoor','Print Enclosed','Specialty','Support',
   ];
+  var TAG_DISPLAY = T.tags || {};
 
   function buildModal(slug, activeTab) {
     var active = activeTab && TABS.some(function (t) { return t.key === activeTab; }) ? activeTab : 'vendor';
@@ -49,18 +52,18 @@
     wrap.className = 'suggest-modal-wrap';
     wrap.innerHTML =
       '<div class="suggest-modal-backdrop" data-close></div>'
-      + '<div class="suggest-modal" role="dialog" aria-modal="true" aria-label="Suggest an edit">'
+      + '<div class="suggest-modal" role="dialog" aria-modal="true" aria-label="' + esc(T.suggestTitle || 'Suggest an edit') + '">'
         + '<div class="suggest-modal-head">'
           + '<div>'
-            + '<h3>Suggest an edit</h3>'
-            + '<p class="suggest-sub">Adding to <strong>' + esc(slug) + '</strong>. Fill in anything you like across the tabs — we\'ll review each.</p>'
+            + '<h3>' + (T.suggestTitle || 'Suggest an edit') + '</h3>'
+            + '<p class="suggest-sub">' + (T.suggestSubPre || 'Adding to ') + '<strong>' + esc(slug) + '</strong>' + (T.suggestSubPost || '. Fill in anything you like across the tabs — we\'ll review each.') + '</p>'
           + '</div>'
           + '<button type="button" class="report-close" data-close aria-label="Close">'
             + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
           + '</button>'
         + '</div>'
 
-        + '<p class="suggest-prompt">What needs fixing?</p>'
+        + '<p class="suggest-prompt">' + (T.suggestPrompt || 'What needs fixing?') + '</p>'
         + '<div class="suggest-tabs" role="tablist">'
           + TABS.map(function (t) {
               var cls = t.key === active ? 'suggest-tab active' : 'suggest-tab';
@@ -73,45 +76,47 @@
         + '<form class="suggest-form">'
           // Vendor pane
           + '<div class="suggest-pane" data-pane="vendor">'
-            + '<label class="form-label">Vendor or brand name</label>'
-            + '<input class="form-input" name="vendor_label" placeholder="e.g. Polymaker" maxlength="80" />'
-            + '<label class="form-label" style="margin-top:0.75rem">Product or store URL</label>'
+            + '<label class="form-label">' + (T.vendorLabel || 'Vendor or brand name') + '</label>'
+            + '<input class="form-input" name="vendor_label" placeholder="' + esc(T.vendorPlaceholder || 'e.g. Polymaker') + '" maxlength="80" />'
+            + '<label class="form-label" style="margin-top:0.75rem">' + (T.vendorUrlLabel || 'Product or store URL') + '</label>'
             + '<input type="url" class="form-input" name="vendor_url" placeholder="https://shop.polymaker.com/..." />'
           + '</div>'
 
           // Video pane
           + '<div class="suggest-pane hidden" data-pane="video">'
-            + '<label class="form-label">YouTube URL</label>'
+            + '<label class="form-label">' + (T.youtubeUrl || 'YouTube URL') + '</label>'
             + '<input type="url" class="form-input" name="video_url" placeholder="https://youtu.be/..." />'
-            + '<label class="form-label" style="margin-top:0.75rem">Video title (optional)</label>'
-            + '<input class="form-input" name="video_title" placeholder="e.g. PLA vs PETG comparison" maxlength="120" />'
+            + '<label class="form-label" style="margin-top:0.75rem">' + (T.videoTitleLabel || 'Video title (optional)') + '</label>'
+            + '<input class="form-input" name="video_title" placeholder="' + esc(T.videoPlaceholder || 'e.g. PLA vs PETG comparison') + '" maxlength="120" />'
           + '</div>'
 
           // Stats pane
           + '<div class="suggest-pane hidden" data-pane="stats">'
-            + '<p class="suggest-hint">Only included if you move at least one slider.</p>'
+            + '<p class="suggest-hint">' + (T.slidersHint || 'Only included if you move at least one slider.') + '</p>'
             + '<div class="stats-grid">'
               + STAT_LABELS.map(function (lbl) {
+                  var display = STAT_DISPLAY[lbl] || lbl;
                   return (
                     '<div class="stat-slider">'
-                      + '<label for="s-' + lbl + '"><span>' + lbl + '</span><output data-out="' + lbl + '">50</output></label>'
+                      + '<label for="s-' + lbl + '"><span>' + display + '</span><output data-out="' + lbl + '">50</output></label>'
                       + '<input type="range" id="s-' + lbl + '" data-stat="' + lbl + '" min="0" max="100" value="50" data-touched="0" />'
                     + '</div>'
                   );
                 }).join('')
             + '</div>'
-            + '<label class="form-label" style="margin-top:0.75rem">Source (optional)</label>'
-            + '<input class="form-input" name="stats_source" placeholder="e.g. Polymaker TDS, my own testing" maxlength="160" />'
+            + '<label class="form-label" style="margin-top:0.75rem">' + (T.sourceOptional || 'Source (optional)') + '</label>'
+            + '<input class="form-input" name="stats_source" placeholder="' + esc(T.sourcePlaceholder || 'e.g. Polymaker TDS, my own testing') + '" maxlength="160" />'
           + '</div>'
 
           // Tags pane
           + '<div class="suggest-pane hidden" data-pane="tags">'
             + '<div class="suggest-tag-grid">'
               + ALL_TAGS.map(function (tag) {
+                  var display = TAG_DISPLAY[tag] || tag;
                   return (
                     '<label class="checkbox-label">'
                       + '<input type="checkbox" name="tags" value="' + esc(tag) + '" />'
-                      + esc(tag)
+                      + esc(display)
                     + '</label>'
                   );
                 }).join('')
@@ -120,14 +125,14 @@
 
           // Note pane
           + '<div class="suggest-pane hidden" data-pane="note">'
-            + '<label class="form-label">What should we change or add?</label>'
-            + '<textarea class="form-textarea" name="note" maxlength="800" placeholder="Tell us in plain English — we\'ll review."></textarea>'
+            + '<label class="form-label">' + (T.noteLabel || 'What should we change or add?') + '</label>'
+            + '<textarea class="form-textarea" name="note" maxlength="800" placeholder="' + esc(T.notePlaceholder || 'Tell us in plain English — we\'ll review.') + '"></textarea>'
           + '</div>'
 
           + '<div class="report-msg" aria-live="polite"></div>'
           + '<div class="report-actions">'
-            + '<button type="button" class="btn btn-outline" data-close>Cancel</button>'
-            + '<button type="submit" class="btn btn-primary">Send suggestion</button>'
+            + '<button type="button" class="btn btn-outline" data-close>' + (T.cancel || 'Cancel') + '</button>'
+            + '<button type="submit" class="btn btn-primary">' + (T.sendSuggestion || 'Send suggestion') + '</button>'
           + '</div>'
         + '</form>'
       + '</div>';
@@ -192,7 +197,7 @@
 
   async function postContribution(slug, contribution) {
     if (!SUPABASE_URL || !SUPABASE_ANON) {
-      throw new Error('Suggestions are not configured yet.');
+      throw new Error(T.suggestionsNotConfigured || 'Suggestions are not configured yet.');
     }
     var res = await fetch(SUPABASE_URL + '/rest/v1/filament_contributions', {
       method: 'POST',
@@ -259,27 +264,31 @@
 
       var items = collectContributions(form);
       if (items.length === 0) {
-        msg.textContent = 'Fill in at least one tab before sending.';
+        msg.textContent = T.fillOneTab || 'Fill in at least one tab before sending.';
         msg.classList.add('error');
         return;
       }
 
       var submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending…';
+      submitBtn.textContent = T.sending || 'Sending…';
       try {
         for (var i = 0; i < items.length; i++) {
           await postContribution(slug, items[i]);
         }
-        var word = items.length === 1 ? 'suggestion' : 'suggestions';
-        msg.textContent = 'Thanks — we\'ll review your ' + items.length + ' ' + word + '.';
+        if (T.thanksSuggestion) {
+          msg.textContent = T.thanksSuggestion;
+        } else {
+          var word = items.length === 1 ? 'suggestion' : 'suggestions';
+          msg.textContent = 'Thanks — we\'ll review your ' + items.length + ' ' + word + '.';
+        }
         msg.classList.add('ok');
         setTimeout(close, 1400);
       } catch (err) {
-        msg.textContent = (err && err.message) || 'Failed to send suggestion.';
+        msg.textContent = (err && err.message) || (T.failedSuggestion || 'Failed to send suggestion.');
         msg.classList.add('error');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send suggestion';
+        submitBtn.textContent = T.sendSuggestion || 'Send suggestion';
       }
     });
   }
